@@ -2,20 +2,55 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>管理者用編集画面</title>
+  <title>不動産屋いはら 管理者用編集画面</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+    input[type="submit"] {
+      margin-top: 2em;
+    }
+  </style>
 </head>
 <body>
   <h1>不動産屋いはら 管理者用編集画面</h1>
-  <form action="/upload" method="post" enctype="multipart/form-data">
+
+  <form action="admin/upload" method="post" enctype="multipart/form-data">
     <label>物件画像アップロード:
       <input type="file" name="property_image" accept="image/*" />
     </label>
-    <br />
+
     <label>物件名:
-      <input type="text" name="property_name" />
+      <input type="text" name="property_name" required />
     </label>
-    <br />
+
+    <label>価格（円）:
+      <input type="number" name="price" required />
+    </label>
+
+    <label>所在地:
+      <input type="text" name="location" required />
+    </label>
+
+    <label>間取り:
+      <input type="text" name="layout" />
+    </label>
+
+    <label>物件説明:
+      <textarea name="description" rows="4" cols="50"></textarea>
+    </label>
+
+    <label>管理者パスワード:
+      <input type="password" name="admin_password" />
+    </label>
+
     <input type="submit" value="登録" />
   </form>
 </body>
 </html>
+
