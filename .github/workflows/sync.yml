@@ -18,3 +18,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./  # admin.html があるフォルダ
           publish_branch: gh-pages
+
+          
