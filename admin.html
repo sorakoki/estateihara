@@ -15,42 +15,139 @@
     input[type="submit"] {
       margin-top: 2em;
     }
+    #preview {
+      margin-top: 2em;
+      border: 1px solid #ccc;
+      padding: 1em;
+    }
+    #list {
+      margin-top: 3em;
+      border-top: 2px solid #333;
+      padding-top: 1em;
+    }
+    .property-card {
+      border: 1px solid #aaa;
+      padding: 1em;
+      margin-bottom: 1em;
+    }
+    .property-card img {
+      max-width: 200px;
+      display: block;
+      margin-top: 0.5em;
+    }
   </style>
 </head>
 <body>
   <h1>不動産屋いはら 管理者用編集画面</h1>
 
-  <form action="admin/upload" method="post" enctype="multipart/form-data">
+  <form id="property-form">
     <label>物件画像アップロード:
-      <input type="file" name="property_image" accept="image/*" />
+      <input type="file" id="image" accept="image/*" />
     </label>
 
     <label>物件名:
-      <input type="text" name="property_name" required />
+      <input type="text" id="property_name" required />
     </label>
 
     <label>価格（円）:
-      <input type="number" name="price" required />
+      <input type="number" id="price" required />
     </label>
 
     <label>所在地:
-      <input type="text" name="location" required />
+      <input type="text" id="location" required />
     </label>
 
     <label>間取り:
-      <input type="text" name="layout" />
+      <input type="text" id="layout" />
     </label>
 
     <label>物件説明:
-      <textarea name="description" rows="4" cols="50"></textarea>
+      <textarea id="description" rows="4" cols="50"></textarea>
     </label>
 
-    <label>管理者パスワード:
-      <input type="password" name="admin_password" />
-    </label>
-
-    <input type="submit" value="登録" />
+    <input type="submit" value="登録して保存" />
   </form>
+
+  <div id="preview"></div>
+  <div id="list"></div>
+
+  <script>
+    const form = document.getElementById("property-form");
+    const preview = document.getElementById("preview");
+    const list = document.getElementById("list");
+
+    // 画像プレビュー
+    document.getElementById("image").addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.innerHTML = `<h2>画像プレビュー</h2><img src="${e.target.result}" alt="物件画像" style="max-width:300px;">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 登録して保存
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const name = document.getElementById("property_name").value;
+      const price = document.getElementById("price").value;
+      const location = document.getElementById("location").value;
+      const layout = document.getElementById("layout").value;
+      const description = document.getElementById("description").value;
+      const imageFile = document.getElementById("image").files[0];
+
+      if (!imageFile) {
+        alert("画像を選択してください");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const property = {
+          name,
+          price,
+          location,
+          layout,
+          description,
+          image: e.target.result
+        };
+
+        // 保存（ローカルストレージ）
+        const saved = JSON.parse(localStorage.getItem("properties") || "[]");
+        saved.push(property);
+        localStorage.setItem("properties", JSON.stringify(saved));
+
+        // 表示更新
+        displayProperties();
+        form.reset();
+        preview.innerHTML = "";
+      };
+      reader.readAsDataURL(imageFile);
+    });
+
+    // 一覧表示
+    function displayProperties() {
+      const saved = JSON.parse(localStorage.getItem("properties") || "[]");
+      list.innerHTML = "<h2>登録済み物件一覧</h2>";
+      saved.forEach((p, index) => {
+        list.innerHTML += `
+          <div class="property-card">
+            <strong>物件名:</strong> ${p.name}<br>
+            <strong>価格:</strong> ${p.price} 円<br>
+            <strong>所在地:</strong> ${p.location}<br>
+            <strong>間取り:</strong> ${p.layout}<br>
+            <strong>説明:</strong> ${p.description}<br>
+            <img src="${p.image}" alt="物件画像">
+          </div>
+        `;
+      });
+    }
+
+    // 初期表示
+    displayProperties();
+  </script>
 </body>
 </html>
-
