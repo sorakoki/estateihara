@@ -72,6 +72,7 @@
 
     <input type="submit" value="登録または更新" />
   </form>
+  <button id="download-json">JSONファイルとして保存</button>
 
   <div id="preview"></div>
   <div id="list"></div>
@@ -181,6 +182,23 @@
 
     // 初期表示
     displayProperties();
+    document.getElementById("download-json").addEventListener("click", function () {
+  const properties = localStorage.getItem("properties");
+  if (!properties || properties === "[]") {
+    alert("保存されている物件情報がありません。");
+    return;
+  }
+
+  const blob = new Blob([properties], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "properties.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+});
   </script>
 </body>
 </html>
