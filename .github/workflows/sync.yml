@@ -21,5 +21,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git remote add public https://x-access-token:${GH_TOKEN}@github.com/sorakoki/realestateihara.git
+          git remote add public https://${GH_TOKEN}@github.com/sorakoki/realestateihara.git
+
           git push public HEAD:main --force
