@@ -17,6 +17,7 @@ jobs:
           git config --global user.name "sorakoki"
           git config --global user.email "zpzezn@gmail.com"
 
+
       - name: Push to public repo
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
