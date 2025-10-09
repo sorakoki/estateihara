@@ -1,26 +1,25 @@
 name: Sync to Public Repo
-
 on:
   push:
     branches:
       - main
-
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout admin repo
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 全履歴を取得
+      
       - name: Set up Git
         run: |
           git config --global user.name "sorakoki"
           git config --global user.email "zpzezn@gmail.com"
-
+      
       - name: Push to public repo
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git remote add public https://${GH_TOKEN}@github.com/sorakoki/realestateihara.git
-
+          git remote add public https://${GH_TOKEN}@github.com/sorakoki/realestateihara.git || git remote set-url public https://x-access-token:${GH_TOKEN}@github.com/sorakoki/realestateihara.git
           git push public HEAD:main --force
