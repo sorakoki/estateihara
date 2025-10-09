@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>不動産屋いはら 管理者用編集画面</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+    input[type="submit"] {
+      margin-top: 2em;
+    }
+    #preview {
+      margin-top: 2em;
+      border: 1px solid #ccc;
+      padding: 1em;
+    }
+    #list {
+      margin-top: 3em;
+      border-top: 2px solid #333;
+      padding-top: 1em;
+    }
+    .property-card {
+      border: 1px solid #aaa;
+      padding: 1em;
+      margin-bottom: 1em;
+    }
+    .property-card img {
+      max-width: 200px;
+      display: block;
+      margin-top: 0.5em;
+    }
+    .property-card button {
+      margin-right: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>不動産屋いはら 管理者用編集画面</h1>
+
+  <form id="property-form">
+    <input type="hidden" id="edit-index" value="-1" />
+
+    <label>物件画像アップロード:
+      <input type="file" id="image" accept="image/*" />
+    </label>
+
+    <label>物件名:
+      <input type="text" id="property_name" required />
+    </label>
+
+    <label>賃料（円）:
+      <input type="number" id="price" required />
+    </label>
+
+    <label>所在地:
+      <input type="text" id="location" required />
+    </label>
+
+    <label>間取り:
+      <input type="text" id="layout" />
+    </label>
+
+    <label>物件説明:
+      <textarea id="description" rows="4" cols="50"></textarea>
+    </label>
+
+    <input type="submit" value="登録または更新" />
+  </form>
+  <button id="download-json">JSONファイルとして保存</button>
+
+  <div id="preview"></div>
+  <div id="list"></div>
+
+  <script>
+    const form = document.getElementById("property-form");
+    const preview = document.getElementById("preview");
+    const list = document.getElementById("list");
+    const editIndexInput = document.getElementById("edit-index");
+
+    // 画像プレビュー
+    document.getElementById("image").addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.innerHTML = `<h2>画像プレビュー</h2><img src="${e.target.result}" alt="物件画像" style="max-width:300px;">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 登録または更新
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const name = document.getElementById("property_name").value;
+      const price = document.getElementById("price").value;
+      const location = document.getElementById("location").value;
+      const layout = document.getElementById("layout").value;
+      const description = document.getElementById("description").value;
+      const imageFile = document.getElementById("image").files[0];
+      const editIndex = parseInt(editIndexInput.value);
+
+      const saveProperty = (imageData) => {
+        const property = { name, price, location, layout, description, image: imageData };
+        const saved = JSON.parse(localStorage.getItem("properties") || "[]");
+
+        if (editIndex >= 0) {
+          saved[editIndex] = property;
+        } else {
+          saved.push(property);
+        }
+
+        localStorage.setItem("properties", JSON.stringify(saved));
+        displayProperties();
+        form.reset();
+        preview.innerHTML = "";
+        editIndexInput.value = -1;
+      };
+
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          saveProperty(e.target.result);
+        };
+        reader.readAsDataURL(imageFile);
+      } else {
+        const saved = JSON.parse(localStorage.getItem("properties") || "[]");
+        const existingImage = editIndex >= 0 ? saved[editIndex].image : "";
+        saveProperty(existingImage);
+      }
+    });
+
+    // 一覧表示
+    function displayProperties() {
+      const saved = JSON.parse(localStorage.getItem("properties") || "[]");
+      list.innerHTML = "<h2>登録済み物件一覧</h2>";
+      saved.forEach((p, index) => {
+        list.innerHTML += `
+          <div class="property-card">
+            <strong>物件名:</strong> ${p.name}<br>
+            <strong>価格:</strong> ${p.price} 円<br>
+            <strong>所在地:</strong> ${p.location}<br>
+            <strong>間取り:</strong> ${p.layout}<br>
+            <strong>説明:</strong> ${p.description}<br>
+            <img src="${p.image}" alt="物件画像">
+            <button onclick="editProperty(${index})">編集</button>
+            <button onclick="deleteProperty(${index})">削除</button>
+          </div>
+        `;
+      });
+    }
+
+    // 編集機能
+    window.editProperty = function(index) {
+      const saved = JSON.parse(localStorage.getItem("properties") || "[]");
+      const p = saved[index];
+      document.getElementById("property_name").value = p.name;
+      document.getElementById("price").value = p.price;
+      document.getElementById("location").value = p.location;
+      document.getElementById("layout").value = p.layout;
+      document.getElementById("description").value = p.description;
+      preview.innerHTML = `<h2>画像プレビュー</h2><img src="${p.image}" alt="物件画像" style="max-width:300px;">`;
+      editIndexInput.value = index;
+    };
+
+    // 削除機能
+    window.deleteProperty = function(index) {
+      if (confirm("この物件を削除しますか？")) {
+        const saved = JSON.parse(localStorage.getItem("properties") || "[]");
+        saved.splice(index, 1);
+        localStorage.setItem("properties", JSON.stringify(saved));
+        displayProperties();
+      }
+    };
+
+    // 初期表示
+    displayProperties();
+    document.getElementById("download-json").addEventListener("click", function () {
+  const properties = localStorage.getItem("properties");
+  if (!properties || properties === "[]") {
+    alert("保存されている物件情報がありません。");
+    return;
+  }
+
+  const blob = new Blob([properties], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "properties.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+});
+  </script>
+</body>
+</html>
+
