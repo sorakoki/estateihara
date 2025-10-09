@@ -28,3 +28,4 @@ jobs:
         run: |
           git remote add public git@github.com:sorakoki/realestateihara.git
           git push public HEAD:main --force
+
