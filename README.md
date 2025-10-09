@@ -28,4 +28,5 @@ myproject/ ├── index.html ├── README.md ├── admin/ │ └─�
 
 Updated: Thu Oct  9 16:26:54 JST 2025
 echo "Updated again: $(date)" >> README.md   
-# iara
+# ihara
+
