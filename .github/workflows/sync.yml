@@ -1,25 +1,30 @@
 name: Sync to Public Repo
+
 on:
   push:
     branches:
       - main
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout admin repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 全履歴を取得
-      
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
       - name: Set up Git
         run: |
-          git config --global user.name "sorakoki"
-          git config --global user.email "zpzezn@gmail.com"
-      
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
       - name: Push to public repo
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git remote add public https://${GH_TOKEN}@github.com/sorakoki/realestateihara.git || git remote set-url public https://x-access-token:${GH_TOKEN}@github.com/sorakoki/realestateihara.git
+          git remote add public git@github.com:sorakoki/realestateihara.git
           git push public HEAD:main --force
