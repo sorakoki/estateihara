@@ -1,4 +1,4 @@
-name: Sync to Pages
+name: Sync to Public Repo
 
 on:
   push:
@@ -6,17 +6,20 @@ on:
       - main
 
 jobs:
-  deploy:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout admin repo
         uses: actions/checkout@v3
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./  # admin.html があるフォルダ
-          publish_branch: gh-pages
+      - name: Set up Git
+        run: |
+          git config --global user.name "sorakoki"
+          git config --global user.email "zpzezn@gmail.com"
 
-          
+      - name: Push to public repo
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git remote add public https://x-access-token:${GH_TOKEN}@github.com/sorakoki/realestateihara.git
+          git push public HEAD:main --force
