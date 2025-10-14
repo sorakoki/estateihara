@@ -1,10 +1,10 @@
 [
   {
-    "name": "サンプル物件",
+    "name": "テスト物件",
     "price": "80000",
-    "location": "鹿児島市中央町",
+    "location": "鹿児島市",
     "layout": "2LDK",
-    "description": "駅近で便利な物件です。",
-    "image": "data:image/jpeg;base64,..."
+    "description": "駅近で便利",
+   "image": "img/テスト物件/main.jpg"
   }
 ]

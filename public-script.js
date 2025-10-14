@@ -11,7 +11,8 @@ fetch("properties.json")
         <strong>所在地:</strong> ${p.location}<br>
         <strong>間取り:</strong> ${p.layout}<br>
         <strong>説明:</strong> ${p.description}<br>
-        <img src="${p.image}" alt="物件画像">
+        <img src="../realestateihara/img/${p.name}/${p.images[0]}" alt="物件画像">
+
       `;
       list.appendChild(card);
     });
