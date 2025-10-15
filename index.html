@@ -162,5 +162,16 @@ fetch("properties.json")
   });
 
 </script>
+<!-- 🍄 きのこマーク（小さい画像） -->
+<img src="img/erin-icon.png" alt="エリンマーク" id="erinIcon" style="width:60px; cursor:pointer; margin:20px 0;">
+
+<!-- 🍄 モーダル表示用の大きな画像（最初は非表示） -->
+<div id="erinModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999;">
+  <div style="position:relative; margin:5% auto; width:90%; max-width:600px;">
+    <img src="img/erin-large.png" alt="エリンの画像" style="width:100%; border-radius:8px;">
+    <button onclick="document.getElementById('erinModal').style.display='none'" style="position:absolute; top:10px; right:10px; background:#fff; border:none; padding:5px 10px; cursor:pointer;">閉じる</button>
+  </div>
+</div>
+
 </body>
 </html>
