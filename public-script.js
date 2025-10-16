@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>不動産屋いはらのホームページ</title>
+  <link rel="icon" href="img/1.png" type="image/png" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+    header { background-color: #004d99; color: white; padding: 20px 0; text-align: center; }
+    nav { background-color: #003366; padding: 10px 0; text-align: center; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    main { padding: 20px; max-width: 1200px; margin: 0 auto; background-color: white; }
+    footer { background-color: #003366; color: white; text-align: center; padding: 15px 0; margin-top: 20px; }
+    .property-list { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .property { border: 1px solid #ddd; border-radius: 5px; overflow: hidden; width: 100%; background-color: #fafafa; max-width: 400px; }
+    .property img { width: 100%; height: 200px; object-fit: cover; }
+    .property-details { padding: 15px; }
+    .property-title { font-size: 1.2em; margin-bottom: 10px; color: #004d99; }
+    .property-price { color: #e60000; font-weight: bold; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>不動産屋いはらのホームページへようこそ</h1>
+  </header>
+  <nav>
+    <a href="index.html">ホーム</a>
+    <a href="index.html#properties">物件一覧</a>
+  </nav>
+  <main>
+    <section id="properties">
+      <h2>物件</h2>
+      <div class="property-list"></div>
+    </section>
+
+    <section>
+      <h3>事務所のこと</h3>
+      <p>
+        不動産屋いはらは地域密着型の不動産会社です。<br />
+        土地・建物の売買や賃貸、リフォームのご相談も承ります。<br />
+        <strong>
+          <a href="https://www.google.com/maps/place/鹿児島県鹿児島市山田町２２８９−１" target="_blank" style="color:inherit; text-decoration:underline;">
+            所在地
+          </a>
+        </strong><br />
+        <strong>営業時間：</strong> 9:00～18:00（定休日：水曜日）
+      </p>
+      <h4>お問い合わせ</h4>
+      <p>
+        ご質問・ご相談は下記フォームよりお気軽にご連絡ください。<br />
+        <span style="color:red; font-weight:bold;">
+          ※誠に恐れ入りますが、システムの都合上、Gmailアドレスをご利用の方は通常通り対応いたします。<br />
+          Gmail以外のメールアドレスをご利用の場合も、右アドレス、<a href="mailto:info@2two.2box.jp">info@2two.2box.jp</a> にて承りますのでご安心ください。<br />
+          どうぞよろしくお願いいたします
+        </span>
+      </p>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSd1r_bKCZREyPeH9CyX8f9sglQ6ZdUBf2zkZ4xjFwP-d6XViw/viewform?usp=sf_link">お問い合わせはこちら</a>
+
+      <iframe src="wall-measure.html#tatami" width="100%" height="420" style="border:1px solid #ccc; margin-top:30px;"></iframe>
+    </section>
+
+    <section>
+      <h2>お知らせ</h2>
+      <ul>
+        <li>最新の物件情報を随時更新中です。</li>
+        <li>リフォームやDIYのご相談も受け付けています。</li>
+      </ul>
+
+      <div class="cut-panel">
+        <div class="panel-title">板カット計算ツール</div>
+        <!-- SVGと入力フォームはそのまま -->
+        <!-- ...省略可能... -->
+        <div id="cutResult"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 不動産屋いはらwith 
+      <img src="img/erin-icon.png" alt="エリンマーク" id="erinIcon" style="width:20px; vertical-align:middle; cursor:pointer;">. 
+      All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 🍄 板カット計算
+      const btn = document.getElementById('calcCutBtn');
+      if (btn) {
+        btn.onclick = function () {
+          const A = parseFloat(document.getElementById('cutA').value);
+          const B = parseFloat(document.getElementById('cutB').value);
+          const C = parseFloat(document.getElementById('cutC').value);
+          const D = parseFloat(document.getElementById('cutD').value);
+          if (isNaN(A) || isNaN(B) || isNaN(C) || isNaN(D) || A <= 0 || B <= 0 || C <= 0 || D <= 0) {
+            document.getElementById('cutResult').innerText = "全ての辺の長さを正しく入力してください。";
+            return;
+          }
+          const width = Math.min(A, C);
+          const height = Math.min(B, D);
+          const cutA = A - width;
+          const cutB = B - height;
+          const cutC = C - width;
+          const cutD = D - height;
+          let msg = `【切るべき長さ】\n`;
+          msg += `上辺Aから ${cutA} mm\n`;
+          msg += `右辺Bから ${cutB} mm\n`;
+          msg += `下辺Cから ${cutC} mm\n`;
+          msg += `左辺Dから ${cutD} mm\n\n`;
+          msg += `※最も短い辺に合わせて長方形に近づける計算です。\n`;
+          msg += `ノコギリの厚みも考慮してください。`;
+          document.getElementById('cutResult').innerText = msg;
+        };
+      }
+
+      // 🍄 エリン画像クリックでモーダル表示
+      const erinIcon = document.getElementById('erinIcon');
+      if (erinIcon) {
+        erinIcon.addEventListener('click', function () {
+          document.getElementById('erinModal').style.display = 'block';
+        });
+      }
+
+      // 🍄 物件情報の読み込み
+      fetch("properties.json")
+        .then(res => res.json())
+        .then(data => {
+          const container = document.querySelector(".property-list");
+          container.innerHTML = "";
+          data.forEach(p => {
+            const imagePath = p.image
+              ? p.image
+              : `img/${p.name}/${p.images && p.images[0] ? p.images[0] : "noimage.jpg"}`;
+            container.innerHTML += `
+              <div class="property">
+                <img src="${imagePath}" alt="${p.name}" style="max-width:300px;"><br>
+                <div class="property-details">
+                  <div class="property-title">${p.name}</div>
+                  <div class="property-price">価格: ${p.price} 円</div>
+                  <div class="property-location">所在地: ${p.location}</div>
+                  <div class="property-layout">間取り: ${p.layout}</div>
+                  <p>${p.description}</p>
+                </div>
+              </div>
+            `;
+          });
+        })
+        .catch(err => {
+          document.querySelector(".property-list").innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
+          console.error("JSON読み込みエラー:", err);
+        });
+    });
+  </script>
+
+ <!-- 🍄 モーダル表示用の大きな画像 -->
+<div id="erinModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999;">
+  <div style="position:relative; margin:5% auto; width:90%; max-width:600px;">
+    <img src="img/erin-large.png" alt="エリンの画像" style="width:100%; border-radius:8px;">
+    <button onclick="document.getElementById('erinModal').style.display='none'" style="position:absolute; top:10px; right:10px; background:#fff; border:none; padding:5px 10px; cursor:pointer;">閉じる</button>
+  </div>
+</div>
+
+
+</body>
+</html>
