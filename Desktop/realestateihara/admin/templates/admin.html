@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>物件登録</title>
+  <style>
+    #drop-area {
+      border: 2px dashed #ccc;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    #drop-area.hover {
+      background-color: #f0f0f0;
+    }
+    #gallery img {
+      max-width: 100px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>物件登録フォーム</h1>
+  <form id="propertyForm">
+    <input type="text" name="property_name" placeholder="物件名" required><br>
+    <input type="text" name="price" placeholder="価格"><br>
+    <input type="text" name="location" placeholder="場所"><br>
+    <input type="text" name="layout" placeholder="間取り"><br>
+    <textarea name="description" placeholder="説明"></textarea><br>
+
+    <div id="drop-area">
+      <p>画像をここにドラッグ＆ドロップ</p>
+      <input type="file" id="fileElem" multiple accept="image/*" style="display:none">
+      <button type="button" onclick="fileElem.click()">ファイルを選択</button>
+      <div id="gallery"></div>
+    </div>
+
+    <button type="submit">登録</button>
+  </form>
+
+  <script>
+    const dropArea = document.getElementById('drop-area');
+    const gallery = document.getElementById('gallery');
+    const fileElem = document.getElementById('fileElem');
+    let files = [];
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, e => {
+        e.preventDefault();
+        dropArea.classList.add('hover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, e => {
+        e.preventDefault();
+        dropArea.classList.remove('hover');
+      });
+    });
+
+    dropArea.addEventListener('drop', e => {
+      files = [...e.dataTransfer.files];
+      showPreview(files);
+    });
+
+    fileElem.addEventListener('change', e => {
+      files = [...e.target.files];
+      showPreview(files);
+    });
+
+    function showPreview(fileList) {
+      gallery.innerHTML = '';
+      fileList.forEach(file => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        gallery.appendChild(img);
+      });
+    }
+
+    document.getElementById('propertyForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      files.forEach(file => formData.append('property_image[]', file));
+
+      fetch('server.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.text())
+      .then(msg => alert(msg));
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
