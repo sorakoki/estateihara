@@ -13,5 +13,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: index-html
-          path: index.html
+          path: public
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2
