@@ -1,3 +1,5 @@
+name: Deploy to GitHub Pages
+
 on:
   push:
     branches:
@@ -6,14 +8,23 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: public
+          path: estateihara
+          # ↑ estateihara フォルダを指定！
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
