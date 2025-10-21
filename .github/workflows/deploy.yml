@@ -24,7 +24,8 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           path: estateihara
-          # ↑ estateihara フォルダを指定！
+          # ↑ index.html が入ってるフォルダを指定！
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
+
