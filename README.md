@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-# realestateihara
+
+# estateihara
 
 不動産
 =======
