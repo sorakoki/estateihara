@@ -119,3 +119,11 @@ body {
 .property-details {
   flex: 1;
 }
+.property-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px 0;
+}
+
