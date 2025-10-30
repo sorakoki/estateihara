@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>不動産屋いはらのホームページ</title>
-  <link rel="icon" href="img/favicon.png" type="image/png" />
+ <link rel="icon" href="img/favicon.png" type="image/png" />
+
   <link rel="manifest" href="manifest.json" />
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
@@ -156,9 +157,14 @@ fetch("data/properties.json")
       card.className = "property";
 
       // メイン画像（最初の画像）
-      if (p.images && p.images.length > 0) {
+      if (p.images && p.images.length > 0 && p.folder) {
         const mainImg = document.createElement("img");
-        mainImg.src = `img/山田貸家/${p.images[0]}`;
+        mainImg.src = `img/${p.folder}/${p.images[0]}`;
+        mainImg.alt = p.name;
+        card.appendChild(mainImg);
+      } else if (p.image) {
+        const mainImg = document.createElement("img");
+        mainImg.src = p.image;
         mainImg.alt = p.name;
         card.appendChild(mainImg);
       }
@@ -175,13 +181,13 @@ fetch("data/properties.json")
       `;
       card.appendChild(details);
 
-      // ギャラリー表示
-      if (p.images && p.images.length > 1) {
+      // ギャラリー表示（2枚目以降）
+      if (p.images && p.images.length > 1 && p.folder) {
         const gallery = document.createElement("div");
         gallery.className = "property-gallery";
         p.images.slice(1).forEach(filename => {
           const img = document.createElement("img");
-          img.src = `img/山田貸家/${filename}`;
+          img.src = `img/${p.folder}/${filename}`;
           img.alt = p.name;
           img.style.width = "100px";
           img.style.height = "100px";
