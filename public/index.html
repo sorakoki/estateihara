@@ -156,18 +156,14 @@ fetch("data/properties.json")
       const card = document.createElement("div");
       card.className = "property";
 
-      // メイン画像（最初の画像）
-      if (p.images && p.images.length > 0 && p.folder) {
-        const mainImg = document.createElement("img");
-        mainImg.src = `img/${p.folder}/${p.images[0]}`;
-        mainImg.alt = p.name;
-        card.appendChild(mainImg);
-      } else if (p.image) {
-        const mainImg = document.createElement("img");
-        mainImg.src = p.image;
-        mainImg.alt = p.name;
-        card.appendChild(mainImg);
-      }
+      // メイン画像（複数画像のみ対応）
+if (p.images && p.images.length > 0 && p.folder) {
+  const mainImg = document.createElement("img");
+  mainImg.src = `img/${p.folder}/${p.images[0]}`;
+  mainImg.alt = p.name;
+  card.appendChild(mainImg);
+}
+
 
       // 詳細情報
       const details = document.createElement("div");
@@ -206,6 +202,7 @@ fetch("data/properties.json")
     console.error("JSON読み込みエラー:", err);
   });
 </script>
+
 
 <script src="static/image-tool.js"></script>
 
