@@ -148,55 +148,31 @@
     });
     </script>
 <script>
-fetch("data/properties.json")
-  .then(res => res.json())
+fetch('public/data/properties.json')
+  .then(response => response.json())
   .then(data => {
-    const container = document.querySelector(".property-list");
-    data.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "property";
+    const container = document.getElementById('property-list');
+    data.forEach(property => {
+      const card = document.createElement('div');
+      card.className = 'property-card';
 
-      // メイン画像（複数画像のみ対応）
-if (p.images && p.images.length > 0 && p.folder) {
-  const mainImg = document.createElement("img");
-  mainImg.src = `img/${p.folder}/${p.images[0]}`;
-  mainImg.alt = p.name;
-  card.appendChild(mainImg);
-}
-
-
-      // 詳細情報
-      const details = document.createElement("div");
-      details.className = "property-details";
-      details.innerHTML = `
-        <div class="property-title">${p.name}</div>
-        <div class="property-price">価格: ${p.price} 円</div>
-        <div class="property-location">所在地: ${p.location}</div>
-        <div class="property-layout">間取り: ${p.layout}</div>
-        <p>${p.description}</p>
+      card.innerHTML = `
+        <h2>${property.name}</h2>
+        <p>価格: ${property.price} 円</p>
+        <p>所在地: ${property.location}</p>
+        <p>間取り: ${property.layout}</p>
+        <p>${property.description}</p>
+        <div class="image-gallery">
+          ${property.images.map(img => `
+            <img src="public/img/${property.folder}/${img}" alt="${property.name}">
+          `).join('')}
+        </div>
       `;
-      card.appendChild(details);
-
-      // ギャラリー表示（2枚目以降）
-      if (p.images && p.images.length > 1 && p.folder) {
-        const gallery = document.createElement("div");
-        gallery.className = "property-gallery";
-        p.images.slice(1).forEach(filename => {
-          const img = document.createElement("img");
-          img.src = `img/${p.folder}/${filename}`;
-          img.alt = p.name;
-          img.style.width = "100px";
-          img.style.height = "100px";
-          img.style.objectFit = "cover";
-          img.style.margin = "5px";
-          gallery.appendChild(img);
-        });
-        card.appendChild(gallery);
-      }
 
       container.appendChild(card);
     });
-  })
+  });
+
   .catch(err => {
     document.querySelector(".property-list").innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
     console.error("JSON読み込みエラー:", err);
