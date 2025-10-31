@@ -26,7 +26,8 @@ jobs:
       - name: Upload site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./public
+          path: estateihara/public
+
 
 
 
