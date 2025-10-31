@@ -34,7 +34,8 @@
 <main>
    <section id="properties">
   <h2>物件</h2>
-  <div class="property-list">
+  <div class="property-list" id="property-list">
+
     <!-- 👇ここは空にする -->
   </div>
 </section>
@@ -169,21 +170,15 @@ fetch('public/data/properties.json')
         </div>
       `;
 
-      container.appendChild(card);
+container.appendChild(card);
     });
-  });
-
+  })
   .catch(err => {
-    document.querySelector(".property-list").innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
+    const container = document.getElementById("property-list");
+    if (container) {
+      container.innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
+    }
     console.error("JSON読み込みエラー:", err);
   });
-</script>
 
-
-<script src="static/image-tool.js"></script>
-
-
-
-</body>
-</html>
 
