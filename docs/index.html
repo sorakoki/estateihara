@@ -73,18 +73,16 @@
         <li>リフォームやDIYのご相談も受け付けています。</li>
       </ul>
     </section>
+<section>
+  <h2>板カット計算ツール</h2>
+  <iframe src="cut-panel.html" width="100%" height="420" style="border:1px solid #ccc; margin-top:30px;"></iframe>
+</section>
   </main>
   <footer>
     <p>© 2025 不動産屋いはら with エリン🍄. All rights reserved.</p>
   </footer>
 
-  <!-- Service Worker 登録 -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./static/service-worker.js')
-        .then(reg => console.log('✅ Service Worker registered:', reg))
-        .catch(err => console.error('❌ Service Worker registration failed:', err));
-    }
+  
   </script>
 
   <!-- 物件情報読み込み -->
