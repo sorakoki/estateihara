@@ -7129,3 +7129,15 @@ text-shadow:-1px -1px #FFF,1px -1px #FFF,-1px  1px #FFF,1px  1px #FFF,0 1px 5px 
 .property-details {
   flex: 1;
 }
+nav {
+  background-color: #f5f5f5;
+  padding: 10px;
+  text-align: center;
+}
+
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}

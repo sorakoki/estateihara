@@ -6,16 +6,20 @@
   <link rel="stylesheet" href="../static/cut-panel.css">
 </head>
 <body>
-  <h1>板カット計算ツール</h1>
+  <h2>板カット計算ツール</h2>
+<p>A: 上辺　B: 右辺　C: 下辺　D: 左辺</p>
+<p>各頂点は a, b, c, d で示しています</p>
 
- <label>上辺 A (mm): <input type="number" id="cutA" value="920"></label>
+  <img src="static/panel.png" alt="四角形の図" width="400" style="margin: 12px 0;">
+
+<label>上辺 A (mm): <input type="number" id="cutA" value="920"></label>
 <label>右辺 B (mm): <input type="number" id="cutB" value="1825"></label>
 <label>下辺 C (mm): <input type="number" id="cutC" value="920"></label>
-<label>左辺 D (mm): <input type="number" id="cutD" value="1823"></label>
+<label>左辺 D (mm): <input type="number" id="cutD" value="1825"></label>
 
 <button id="calcCutBtn">計算</button>
-
 <pre id="cutResult"></pre>
+
 
 
  <!-- cut-panel.html の中 -->
