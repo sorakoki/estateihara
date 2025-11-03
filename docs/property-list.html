@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>物件一覧</title>
+  <style>
+    body { font-family: sans-serif; background: #f7f7f7; padding: 20px; }
+    .property-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 16px;
+      margin-bottom: 20px;
+      max-width: 600px;
+    }
+    img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #2196F3;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>物件一覧</h2>
+  <div id="propertyList"></div>
+
+  <script>
+    fetch('data/properties.json')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('propertyList');
+        data.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'property-card';
+          div.innerHTML = `
+            <h3>${p.title}</h3>
+            <p><strong>地域:</strong> ${p.area}</p>
+            <p><strong>間取り:</strong> ${p.layout}</p>
+            <p><strong>家賃:</strong> ${p.price}</p>
+            <p>${p.description}</p>
+            <img src="${p.images[0]}" alt="${p.title}">
+            <button onclick="contract('${p.id}')">契約する</button>
+          `;
+          container.appendChild(div);
+        });
+      });
+
+    function contract(id) {
+      alert(`仮契約処理を開始します（物件ID: ${id}）`);
+    }
+  </script>
+</body>
+</html>
