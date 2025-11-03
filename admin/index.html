@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>物件管理画面</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>物件管理</h1>
+
+  <section id="property-selector">
+    <label for="property">物件を選択：</label>
+    <select id="property">
+      <option value="">-- 選択してください --</option>
+      <option value="山田貸家">山田貸家</option>
+      <option value="貸家東">貸家東</option>
+      <!-- 必要に応じて追加 -->
+    </select>
+  </section>
+
+  <section id="editor" style="display: none;">
+    <h2 id="property-title">物件情報</h2>
+    <form id="property-form">
+      <label>
+        タイトル：
+        <input type="text" id="title" name="title" />
+      </label>
+      <br />
+      <label>
+        説明：
+        <textarea id="description" name="description"></textarea>
+      </label>
+      <br />
+      <button type="submit">保存</button>
+    </form>
+  </section>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
