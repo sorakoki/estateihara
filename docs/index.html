@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>不動産屋いはらのホームページ</title>
+  <link rel="icon" href="img/favicon.png" type="image/png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+    header { background-color: #004d99; color: white; padding: 20px 0; text-align: center; }
+    nav { background-color: #003366; padding: 10px 0; text-align: center; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    main { padding: 20px; max-width: 1200px; margin: 0 auto; background-color: white; }
+    footer { background-color: #003366; color: white; text-align: center; padding: 15px 0; margin-top: 20px; }
+    .property-list { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .property { border: 1px solid #ddd; border-radius: 5px; overflow: hidden; width: 100%; background-color: #fafafa; max-width: 400px; }
+    .property img { width: 100%; height: 200px; object-fit: cover; }
+    .property-details { padding: 15px; }
+    .property-title { font-size: 1.2em; margin-bottom: 10px; color: #004d99; }
+    .property-price { color: #e60000; font-weight: bold; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>不動産屋いはらのホームページへようこそ</h1>
+  </header>
+  <nav>
+    <a href="index.html">ホーム</a>
+    <a href="index.html#properties">物件一覧</a>
+    <a href="static/cut-panel.html">切断パネルへ</a>
+  </nav>
+  <main>
+    <section id="properties">
+      <h2>物件</h2>
+      <div class="property-list" id="property-list">
+        <!-- JavaScriptで物件カードを挿入 -->
+      </div>
+    </section>
+
+    <section>
+      <h3>事務所のこと</h3>
+      <p>
+        不動産屋いはらは地域密着型の不動産会社です。<br />
+        土地・建物の売買や賃貸、リフォームのご相談も承ります。<br />
+        <strong>
+          <a href="https://www.google.com/maps/place/鹿児島県鹿児島市山田町２２８９−１" target="_blank" style="color:inherit; text-decoration:underline;">
+            所在地
+          </a>
+        </strong><br />
+        <strong>営業時間：</strong> 9:00～18:00（定休日：水曜日）
+      </p>
+      <h4>お問い合わせ</h4>
+      <p>
+        ご質問・ご相談は下記フォームよりお気軽にご連絡ください。<br />
+        <span style="color:red; font-weight:bold;">
+          ※誠に恐れ入りますが、Gmailアドレスをご利用の方は通常通り対応いたします。<br />
+          Gmail以外のメールアドレスをご利用の場合も、右アドレス、<a href="mailto:info@2two.2box.jp">info@2two.2box.jp</a> にて承りますのでご安心ください。<br />
+          どうぞよろしくお願いいたします
+        </span>
+      </p>
+      <p><a href="https://forms.gle/kFGPQZ5veZmkbMf36">お問い合わせ</a></p>
+      <iframe src="wall-measure.html#tatami" width="100%" height="420" style="border:1px solid #ccc; margin-top:30px;"></iframe>
+    </section>
+
+    <section>
+      <h2>お知らせ</h2>
+      <ul>
+        <li>最新の物件情報を随時更新中です。</li>
+        <li>リフォームやDIYのご相談も受け付けています。</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 不動産屋いはら with エリン🍄. All rights reserved.</p>
+  </footer>
+
+  <!-- Service Worker 登録 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./static/service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered:', reg))
+        .catch(err => console.error('❌ Service Worker registration failed:', err));
+    }
+  </script>
+
+  <!-- 物件情報読み込み -->
+  <script>
+    fetch('data/properties.json')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('property-list');
+        data.forEach(property => {
+          const card = document.createElement('div');
+          card.className = 'property';
+
+          card.innerHTML = `
+            <img src="data/${property.folder}/${property.images[0]}" alt="${property.name}">
+            <div class="property-details">
+              <div class="property-title">${property.name}</div>
+              <div class="property-price">¥${property.price}</div>
+              <p>${property.location}</p>
+              <p>${property.layout}</p>
+              <p>${property.description}</p>
+            </div>
+          `;
+
+          container.appendChild(card);
+        });
+      })
+      .catch(err => {
+        const container = document.getElementById("property-list");
+        if (container) {
+          container.innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
+        }
+        console.error("JSON読み込みエラー:", err);
+      });
+  </script>
+</body>
+</html>
+
+
+

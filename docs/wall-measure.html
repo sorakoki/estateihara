@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>間取り入力ツール</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>壁面積と塗装量の計算</h1>
+
+  <!-- ここに必要なHTMLのUIパーツを入れてください -->
+  <input type="file" id="imageInput" accept="image/jpeg,image/png" />
+  <canvas id="canvas"></canvas>
+
+  <div class="controls">
+    <label>基準長（cm）：<input type="number" id="refCm" value="200" min="1"></label><br>
+    <button id="mainModeBtn">壁（メイン）描画中</button>
+    <button id="holeModeBtn">開口部（窓・ドア）描画</button>
+    <button id="undoBtn">Undo</button>
+    <button id="redoBtn">Redo</button>
+    <button id="resetBtn">リセット</button>
+    <button id="calculateBtn">面積を計算</button>
+  </div>
+
+  <div id="result"></div>
+  <div id="advice"></div>
+
+  <div id="paintControls" class="controls">
+    <strong>▼ 外壁塗装の塗料量計算</strong><br>
+    <label>塗料標準塗布量（kg/m²）：<input type="number" id="paintPerM2" value="0.11" step="0.01" min="0.01"></label>
+    <label>塗り回数：
+      <select id="coatTimes">
+        <option value="2">2回塗り</option>
+        <option value="3">3回塗り</option>
+      </select>
+    </label>
+    <label>ロス率（％）：<input type="number" id="lossPercent" value="10" min="0" max="100"></label>
+    <label>塗料1缶容量（kg）：<input type="number" id="canSize" value="15" min="1" step="0.1"></label>
+    <button id="paintCalcBtn">塗料量計算</button>
+  </div>
+  <div id="paintResult"></div>
+
+  <script src="static/wall-measure.js" defer></script>
+
+
+  
+</body>
+</html>
