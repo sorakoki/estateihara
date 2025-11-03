@@ -6,10 +6,6 @@
   <title>不動産屋いはらのホームページ</title>
   <link rel="icon" href="./img/favicon.png" type="image/png" />
   <link rel="stylesheet" href="./main-styles.css" />
-</head>
-
-
-
   <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
     header { background-color: #004d99; color: white; padding: 20px 0; text-align: center; }
@@ -75,19 +71,22 @@
         <li>リフォームやDIYのご相談も受け付けています。</li>
       </ul>
     </section>
-<section>
-  <h2>板カット計算ツール</h2>
-  <iframe src="cut-panel.html" width="100%" height="420" style="border:1px solid #ccc; margin-top:30px;"></iframe>
-</section>
+
+    <section>
+      <h2>板カット計算ツール</h2>
+      <iframe src="cut-panel.html" width="100%" height="420" style="border:1px solid #ccc; margin-top:30px;"></iframe>
+    </section>
   </main>
   <footer>
     <p>© 2025 不動産屋いはら with エリン🍄. All rights reserved.</p>
   </footer>
- <!-- 物件情報読み込み -->
+
+  <!-- 物件情報読み込み -->
   <script>
     fetch('data/properties.json')
       .then(response => response.json())
       .then(data => {
+        console.log(data); // ← ここを追加！
         const container = document.getElementById('property-list');
         data.forEach(property => {
           const card = document.createElement('div');
@@ -115,14 +114,10 @@
         console.error("JSON読み込みエラー:", err);
       });
   </script>
-  .then(data => {
-  console.log(data); // ← ここを追加！
-  const container = document.getElementById('property-list');
-
-
   <script src="static/cut-panel.js" defer></script>
 </body>
 </html>
+
 
 
 
