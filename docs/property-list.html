@@ -37,22 +37,28 @@
         data.forEach(p => {
           const div = document.createElement('div');
           div.className = 'property-card';
+
+          // 画像パスを組み立てる
+          const imagePaths = p.data.map(file => `data/${p.folder}/${file}`);
+          const imagesHtml = imagePaths.map(src => `<img src="${src}" alt="${p.name}">`).join('');
+
           div.innerHTML = `
-            <h3>${p.title}</h3>
-            <p><strong>地域:</strong> ${p.area}</p>
+            <h3>${p.name}</h3>
+            <p><strong>地域:</strong> ${p.location}</p>
             <p><strong>間取り:</strong> ${p.layout}</p>
-            <p><strong>家賃:</strong> ${p.price}</p>
+            <p><strong>家賃:</strong> ¥${p.price}</p>
             <p>${p.description}</p>
-            <img src="${p.images[0]}" alt="${p.title}">
-            <button onclick="contract('${p.id}')">仮契約する</button>
+            ${imagesHtml}
+            <button onclick="contract('${p.name}')">仮契約する</button>
           `;
           container.appendChild(div);
         });
       });
 
-    function contract(id) {
-      alert(`仮契約処理を開始します（物件ID: ${id}）`);
+    function contract(name) {
+      alert(`仮契約処理を開始します（物件: ${name}）`);
     }
   </script>
 </body>
 </html>
+
