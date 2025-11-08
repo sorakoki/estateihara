@@ -246,6 +246,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function getPxPerCm() {
-    if (scalePoints.length === 2) {
-      const dx = scalePoints[0].x - scalePoints[1].x;
-      const
+  if (scalePoints.length === 2) {
+    const dx = scalePoints[0].x - scalePoints[1].x;
+    const dy = scalePoints[0].y - scalePoints[1].y;
+    const pxLength = Math.sqrt(dx * dx + dy * dy);
+    const refCm = parseFloat(document.getElementById("refCm").value);
+    return pxLength / refCm;
+  }
+  return 1; // スケール未設定時の仮値
+}
+
