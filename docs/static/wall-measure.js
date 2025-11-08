@@ -253,9 +253,14 @@ if (currentHole.length > 1) {
   for (let i = 1; i < currentHole.length; i++) {
     ctx.lineTo(currentHole[i].x, currentHole[i].y);
   }
-  ctx.stroke();
-  ctx.setLineDash([]); // 点線解除
-}
+      ctx.stroke();
+    ctx.setLineDash([]); // 点線解除
+  }
+
+} // draw() 関数の終了
+
+}); // DOMContentLoaded のイベントリスナー終了
+
 
 
 
