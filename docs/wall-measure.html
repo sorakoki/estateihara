@@ -12,8 +12,23 @@
   <input type="file" id="imageInput" accept="image/jpeg,image/png" />
   <canvas id="canvas"></canvas>
 
+  <!-- 🧭 操作ガイド -->
+  <div id="guide" style="margin: 16px 0; padding: 12px; background: #f0f8ff; border: 1px solid #99c;">
+    <strong>🧭 操作ガイド</strong><br>
+    <ul>
+      <li>画像を選択するとキャンバスに表示されます</li>
+      <li><strong>スケール線設定</strong>を押してから、基準長の2点をクリック（青い点線）</li>
+      <li><strong>壁部</strong>を描くには「壁（メイン）描画中」ボタンを押してからクリック</li>
+      <li><strong>開口部</strong>を描くには「開口部描画」ボタンを押してからクリック</li>
+      <li>最後の点が最初の点に近いと自動で閉じます（20cm以内）</li>
+      <li>Enterキーでも閉じることができます</li>
+      <li>「面積を計算」ボタンで塗装対象面積が表示されます</li>
+    </ul>
+  </div>
+
   <div class="controls">
     <label>基準長（cm）：<input type="number" id="refCm" value="200" min="1"></label><br>
+    <button id="scaleModeBtn">スケール線設定</button>
     <button id="mainModeBtn">壁（メイン）描画中</button>
     <button id="holeModeBtn">開口部（窓・ドア）描画</button>
     <button id="undoBtn">Undo</button>
@@ -44,3 +59,4 @@
   <script src="static/wall-measure.js" defer></script>
 </body>
 </html>
+
