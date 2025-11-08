@@ -140,52 +140,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 描画関数
   function draw() {
-    const ctx = canvas.getContext("2d");
-    if (!ctx || !img) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx || !img) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
 
-    // 壁ポリゴン
-    if (mainPolygon.length > 1) {
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(mainPolygon[0].x, mainPolygon[0].y);
-      for (let i = 1; i < mainPolygon.length; i++) {
-        ctx.lineTo(mainPolygon[i].x, mainPolygon[i].y);
-      }
-      ctx.stroke();
-    }
-
-    // 開口部（確定済み）
-    ctx.strokeStyle = "green";
+  // 基準長（スケール線）を青で描画（※必要なら）
+  if (scalePoints.length === 2) {
+    ctx.strokeStyle = "blue";
     ctx.lineWidth = 2;
-    holePolygons.forEach(polygon => {
-      if (polygon.length > 1) {
-        ctx.beginPath();
-        ctx.moveTo(polygon[0].x, polygon[0].y);
-        for (let i = 1; i < polygon.length; i++) {
-          ctx.lineTo(polygon[i].x, polygon[i].y);
-        }
-        ctx.closePath();
-        ctx.stroke();
-      }
-    });
+    ctx.beginPath();
+    ctx.moveTo(scalePoints[0].x, scalePoints[0].y);
+    ctx.lineTo(scalePoints[1].x, scalePoints[1].y);
+    ctx.stroke();
 
-    // 開口部（描画中）
-    if (currentHole.length > 1) {
-      ctx.setLineDash([5, 5]);
-      ctx.beginPath();
-      ctx.moveTo(currentHole[0].x, currentHole[0].y);
-      for (let i = 1; i < currentHole.length; i++) {
-        ctx.lineTo(currentHole[i].x, currentHole[i].y);
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
+    // 長さラベル
+    ctx.fillStyle = "blue";
+    ctx.font = "14px sans-serif";
+    const midX = (scalePoints[0].x + scalePoints[1].x) / 2;
+    const midY = (scalePoints[0].y + scalePoints[1].y) / 2;
+    ctx.fillText("基準", midX + 5, midY - 5);
   }
-});
 
+  // 壁ポリゴン（オレンジ）
+  if (mainPolygon.length > 1) {
+    ctx.strokeStyle = "orange";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(mainPolygon[0].x, mainPolygon[0].y);
+    for (let i = 1; i < mainPolygon.length; i++) {
+      ctx.lineTo(mainPolygon[i].x, mainPolygon[i].y);
+    }
+    ctx.stroke();
+  }
 
+  // 開口部（確定済み）緑
+  ctx.strokeStyle = "green";
+  ctx.lineWidth = 2;
+  holePolygons.forEach(polygon => {
+    if (polygon.length > 1) {
+      ctx.beginPath();
+      ctx.moveTo(polygon[0].x, polygon[0].y);
+      for (let i = 1; i < polygon.length; i++) {
+        ctx.lineTo(polygon[i].x, polygon[i].y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+  });
 
+  // 開口部（描画中）緑点線
+  if (currentHole.length > 1) {
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(currentHole[0].x, currentHole[0].y);
+    for (let i = 1; i < currentHole.length; i++) {
+      ctx.lineTo(currentHole[i].x, currentHole[i].y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
