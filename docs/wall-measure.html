@@ -4,12 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>間取り入力ツール</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="static/wall-measure.css" />
 </head>
 <body>
   <h1>壁面積と塗装量の計算</h1>
 
-  <!-- ここに必要なHTMLのUIパーツを入れてください -->
   <input type="file" id="imageInput" accept="image/jpeg,image/png" />
   <canvas id="canvas"></canvas>
 
@@ -39,11 +38,9 @@
     <label>塗料1缶容量（kg）：<input type="number" id="canSize" value="15" min="1" step="0.1"></label>
     <button id="paintCalcBtn">塗料量計算</button>
   </div>
+
   <div id="paintResult"></div>
 
   <script src="static/wall-measure.js" defer></script>
-
-
-  
 </body>
 </html>
