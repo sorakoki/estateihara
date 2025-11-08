@@ -146,16 +146,18 @@ document.addEventListener("DOMContentLoaded", function () {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0);
 
-  // 基準長（スケール線）を青で描画（※必要なら）
+  // 基準長（点線・青）
   if (scalePoints.length === 2) {
     ctx.strokeStyle = "blue";
     ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]); // 点線
     ctx.beginPath();
     ctx.moveTo(scalePoints[0].x, scalePoints[0].y);
     ctx.lineTo(scalePoints[1].x, scalePoints[1].y);
     ctx.stroke();
+    ctx.setLineDash([]); // リセット
 
-    // 長さラベル
+    // ラベル
     ctx.fillStyle = "blue";
     ctx.font = "14px sans-serif";
     const midX = (scalePoints[0].x + scalePoints[1].x) / 2;
@@ -163,10 +165,11 @@ document.addEventListener("DOMContentLoaded", function () {
     ctx.fillText("基準", midX + 5, midY - 5);
   }
 
-  // 壁ポリゴン（オレンジ）
+  // 壁ポリゴン（実線・オレンジ・太め）
   if (mainPolygon.length > 1) {
     ctx.strokeStyle = "orange";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]); // 実線
     ctx.beginPath();
     ctx.moveTo(mainPolygon[0].x, mainPolygon[0].y);
     for (let i = 1; i < mainPolygon.length; i++) {
@@ -178,6 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // 開口部（確定済み）緑
   ctx.strokeStyle = "green";
   ctx.lineWidth = 2;
+  ctx.setLineDash([]);
   holePolygons.forEach(polygon => {
     if (polygon.length > 1) {
       ctx.beginPath();
@@ -192,6 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 開口部（描画中）緑点線
   if (currentHole.length > 1) {
+    ctx.strokeStyle = "green";
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
     ctx.moveTo(currentHole[0].x, currentHole[0].y);
