@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const file = e.target.files[0];
     if (!file) return;
 
-    // ★ 対応ファイル形式の判定
     const allowedTypes = ["image/jpeg", "image/png"];
     if (!allowedTypes.includes(file.type)) {
       alert("この画像形式は対応していません。\nJPEGまたはPNG画像を選択してください。");
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
 
-      // 初期化
       scalePoints = [];
       mainPolygon = [];
       holePolygons = [];
@@ -37,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
       undoStack = [];
       redoStack = [];
 
-      draw(); // ← draw() 関数が定義されている前提
+      draw(); // ※ draw() 関数は別途定義が必要
       URL.revokeObjectURL(url);
     };
 
@@ -49,3 +47,4 @@ document.addEventListener("DOMContentLoaded", function () {
     img.src = url;
   });
 });
+
