@@ -244,10 +244,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // 開口部（描画中）緑点線
-    if (currentHole.length > 1) {
-      ctx.strokeStyle = "green";
-      ctx.setLineDash([5, 5]);
-      ctx.beginPath();
+if (currentHole.length > 1) {
+  ctx.strokeStyle = "green";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(currentHole[0].x, currentHole[0].y);
+  for (let i = 1; i < currentHole.length; i++) {
+    ctx.lineTo(currentHole[i].x, currentHole[i].y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]); // 点線解除
+}
+
 
 
 
