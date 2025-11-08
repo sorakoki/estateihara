@@ -17,8 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let redoStack = [];
   let mode = "main"; // "main" or "hole"
 
-  if (!imageInput || !canvas) return;
-
+  // 画像読み込み処理
   imageInput.addEventListener("change", function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -55,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
     img.src = url;
   });
 
+  // モード切り替え
   mainModeBtn.addEventListener("click", () => {
     mode = "main";
   });
@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
     mode = "hole";
   });
 
+  // キャンバスクリックで点追加
   canvas.addEventListener("click", function (e) {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -80,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
     draw();
   });
 
+  // リセット
   resetBtn.addEventListener("click", () => {
     scalePoints = [];
     mainPolygon = [];
@@ -90,6 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
     draw();
   });
 
+  // Undo
   undoBtn.addEventListener("click", () => {
     const last = undoStack.pop();
     if (!last) return;
@@ -105,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
     draw();
   });
 
+  // Redo
   redoBtn.addEventListener("click", () => {
     const last = redoStack.pop();
     if (!last) return;
@@ -120,10 +124,12 @@ document.addEventListener("DOMContentLoaded", function () {
     draw();
   });
 
+  // 面積計算（仮）
   calculateBtn.addEventListener("click", () => {
     document.getElementById("result").innerText = "※面積計算はまだ未実装です";
   });
 
+  // Enterキーで開口部確定
   document.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && currentHole.length > 2) {
       holePolygons.push([...currentHole]);
@@ -132,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // 描画関数
   function draw() {
     const ctx = canvas.getContext("2d");
     if (!ctx || !img) return;
@@ -179,5 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 });
+
 
 
