@@ -32,19 +32,4 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('cutResult').innerText = msg;
   };
 });
-label {
-  display: block;
-  margin: 8px 0;
-}
 
-button {
-  margin-top: 12px;
-  padding: 6px 12px;
-}
-
-pre {
-  background-color: #f4f4f4;
-  padding: 12px;
-  border: 1px solid #ccc;
-  white-space: pre-wrap;
-}
