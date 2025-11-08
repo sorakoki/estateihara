@@ -1,0 +1,37 @@
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+h1 {
+  color: #333;
+}
+
+canvas {
+  display: block;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  max-width: 100%;
+}
+
+.controls {
+  margin: 12px 0;
+}
+
+label {
+  display: block;
+  margin: 6px 0;
+}
+
+button {
+  margin: 4px;
+  padding: 6px 12px;
+}
+
+#result, #paintResult, #advice {
+  margin-top: 12px;
+  padding: 10px;
+  background-color: #eef;
+  border: 1px solid #99c;
+}
