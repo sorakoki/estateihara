@@ -18,6 +18,16 @@ document.addEventListener("DOMContentLoaded", function () {
   let redoStack = [];
   let mode = "main"; // "scale", "main", "hole"
 
+  function getPxPerCm() {
+    if (scalePoints.length !== 2) return 1;
+    const dx = scalePoints[1].x - scalePoints[0].x;
+    const dy = scalePoints[1].y - scalePoints[0].y;
+    const pxLength = Math.sqrt(dx * dx + dy * dy);
+    const refCm = parseFloat(document.getElementById("refCm").value);
+    if (!refCm || refCm <= 0) return 1;
+    return pxLength / refCm;
+  }
+
   imageInput.addEventListener("change", function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -78,11 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (scalePoints.length < 2) {
         scalePoints.push(point);
         undoStack.push({ type: "scale", point });
-      } else {
-        scalePoints = [point];
-        undoStack.push({ type: "scale", point });
       }
-
     } else if (mode === "main") {
       mainPolygon.push(point);
       undoStack.push({ type: "main", point });
@@ -93,7 +99,6 @@ document.addEventListener("DOMContentLoaded", function () {
           mainPolygon.push(mainPolygon[0]);
         }
       }
-
     } else if (mode === "hole") {
       currentHole.push(point);
       undoStack.push({ type: "hole", point });
@@ -243,24 +248,37 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // 開口部（描画中）緑点線
-if (currentHole.length > 1) {
-  ctx.strokeStyle = "green";
-  ctx.lineWidth = 2;
-  ctx.setLineDash([5, 5]);
-  ctx.beginPath();
-  ctx.moveTo(currentHole[0].x, currentHole[0].y);
-  for (let i = 1; i < currentHole.length; i++) {
-    ctx.lineTo(currentHole[i].x, currentHole[i].y);
-  }
+        // 開口部（描画中）緑点線
+    if (currentHole.length > 1) {
+      ctx.strokeStyle = "green";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(currentHole[0].x, currentHole[0].y);
+      for (let i = 1; i < currentHole.length; i++) {
+        ctx.lineTo(currentHole[i].x, currentHole[i].y);
+      }
       ctx.stroke();
-    ctx.setLineDash([]); // 点線解除
+      ctx.setLineDash([]);
+    }
   }
 
-} // draw() 関数の終了
+  // 補助関数：2点間の距離
+  function distance(p1, p2) {
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
 
-}); // DOMContentLoaded のイベントリスナー終了
-
+  // 補助関数：ポリゴンの面積（Shoelace formula）
+  function polygonArea(points) {
+    let area = 0;
+    for (let i = 0; i < points.length - 1; i++) {
+      area += points[i].x * points[i + 1].y - points[i + 1].x * points[i].y;
+    }
+    return Math.abs(area / 2);
+  }
+});
 
 
 
