@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const imageInput = document.getElementById("imageInput");
   const canvas = document.getElementById("canvas");
+  const scaleModeBtn = document.getElementById("scaleModeBtn");
   const mainModeBtn = document.getElementById("mainModeBtn");
   const holeModeBtn = document.getElementById("holeModeBtn");
   const undoBtn = document.getElementById("undoBtn");
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentHole = [];
   let undoStack = [];
   let redoStack = [];
-  let mode = "main"; // "main" or "hole"
+  let mode = "main"; // "scale", "main", "hole"
 
   imageInput.addEventListener("change", function (e) {
     const file = e.target.files[0];
@@ -53,6 +54,10 @@ document.addEventListener("DOMContentLoaded", function () {
     img.src = url;
   });
 
+  scaleModeBtn.addEventListener("click", () => {
+    mode = "scale";
+  });
+
   mainModeBtn.addEventListener("click", () => {
     mode = "main";
   });
@@ -69,7 +74,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const pxPerCm = getPxPerCm();
 
-    if (mode === "main") {
+    if (mode === "scale") {
+      if (scalePoints.length < 2) {
+        scalePoints.push(point);
+        undoStack.push({ type: "scale", point });
+      } else {
+        scalePoints = [point];
+        undoStack.push({ type: "scale", point });
+      }
+
+    } else if (mode === "main") {
       mainPolygon.push(point);
       undoStack.push({ type: "main", point });
 
@@ -116,6 +130,8 @@ document.addEventListener("DOMContentLoaded", function () {
       mainPolygon.pop();
     } else if (last.type === "hole") {
       currentHole.pop();
+    } else if (last.type === "scale") {
+      scalePoints.pop();
     }
 
     draw();
@@ -131,6 +147,8 @@ document.addEventListener("DOMContentLoaded", function () {
       mainPolygon.push(last.point);
     } else if (last.type === "hole") {
       currentHole.push(last.point);
+    } else if (last.type === "scale") {
+      scalePoints.push(last.point);
     }
 
     draw();
@@ -230,31 +248,6 @@ document.addEventListener("DOMContentLoaded", function () {
       ctx.strokeStyle = "green";
       ctx.setLineDash([5, 5]);
       ctx.beginPath();
-      ctx.moveTo(currentHole[0].x, currentHole[0].y);
-      for (let i = 1; i < currentHole.length; i++) {
-        ctx.lineTo(currentHole[i].x, currentHole[i].y);
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-  }
 
-  function distance(p1, p2) {
-    const dx = p1.x - p2.x;
-    const dy = p1.y - p2.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-    function getPxPerCm() {
-    if (scalePoints.length === 2) {
-      const dx = scalePoints[0].x - scalePoints[1].x;
-      const dy = scalePoints[0].y - scalePoints[1].y;
-      const pxLength = Math.sqrt(dx * dx + dy * dy);
-      const refCm = parseFloat(document.getElementById("refCm").value);
-      return pxLength / refCm;
-    }
-    return 1; // スケール未設定時の仮値
-  }
-});
 
 
