@@ -13,10 +13,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let scalePoints = [];
   let mainPolygon = [];
   let holePolygons = [];
-  let currentHole = [];
+  let currentPolygon = [];
   let undoStack = [];
   let redoStack = [];
-  let mode = "main"; // "scale", "main", "hole"
+  let mode = "main";
+  let mainClosed = false;
 
   function getPxPerCm() {
     if (scalePoints.length !== 2) return 1;
@@ -28,13 +29,25 @@ document.addEventListener("DOMContentLoaded", function () {
     return pxLength / refCm;
   }
 
+  function isPolygonClosed(polygon) {
+    if (polygon.length < 3) return false;
+    const first = polygon[0];
+    const last = polygon[polygon.length - 1];
+    const dx = last.x - first.x;
+    const dy = last.y - first.y;
+    const distancePx = Math.sqrt(dx * dx + dy * dy);
+    const pxPerCm = getPxPerCm();
+    const distanceCm = distancePx / pxPerCm;
+    return distanceCm < 20; // 20cm以内なら閉じたとみなす
+  }
+
   imageInput.addEventListener("change", function (e) {
     const file = e.target.files[0];
     if (!file) return;
 
     const allowedTypes = ["image/jpeg", "image/png"];
     if (!allowedTypes.includes(file.type)) {
-      alert("この画像形式は対応していません。\nJPEGまたはPNG画像を選択してください。");
+      alert("JPEGまたはPNG画像を選択してください。");
       return;
     }
 
@@ -48,93 +61,114 @@ document.addEventListener("DOMContentLoaded", function () {
       scalePoints = [];
       mainPolygon = [];
       holePolygons = [];
-      currentHole = [];
+      currentPolygon = [];
       undoStack = [];
       redoStack = [];
+      mainClosed = false;
 
       draw();
       URL.revokeObjectURL(url);
     };
 
     img.onerror = () => {
-      alert("画像の読み込みに失敗しました。\nファイル形式・サイズ・壊れていないかご確認ください。");
+      alert("画像の読み込みに失敗しました。");
       URL.revokeObjectURL(url);
     };
 
     img.src = url;
   });
 
-  scaleModeBtn.addEventListener("click", () => {
-    mode = "scale";
-  });
-
-  mainModeBtn.addEventListener("click", () => {
-    mode = "main";
-  });
-
-  holeModeBtn.addEventListener("click", () => {
-    mode = "hole";
-  });
+  scaleModeBtn.addEventListener("click", () => { mode = "scale"; });
+  mainModeBtn.addEventListener("click", () => { mode = "main"; });
+  holeModeBtn.addEventListener("click", () => { mode = "hole"; });
 
   canvas.addEventListener("click", function (e) {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const point = { x, y };
-
     const pxPerCm = getPxPerCm();
+    if (!pxPerCm) {
+      alert("まずスケール線を設定してください。");
+      return;
+    }
 
     if (mode === "scale") {
       if (scalePoints.length < 2) {
         scalePoints.push(point);
         undoStack.push({ type: "scale", point });
+        draw();
       }
-    } else if (mode === "main") {
-      mainPolygon.push(point);
-      undoStack.push({ type: "main", point });
-
-      if (mainPolygon.length > 2) {
-        const dist = distance(point, mainPolygon[0]);
-        if (dist <= pxPerCm * 20) {
-          mainPolygon.push(mainPolygon[0]);
-        }
-      }
-    } else if (mode === "hole") {
-      currentHole.push(point);
-      undoStack.push({ type: "hole", point });
-
-      if (currentHole.length > 2) {
-        const dist = distance(point, currentHole[0]);
-        if (dist <= pxPerCm * 20) {
-          holePolygons.push([...currentHole, currentHole[0]]);
-          currentHole = [];
-        }
-      }
+      return;
     }
 
-    draw();
+    if (mode === "main") {
+      if (mainClosed) return;
+
+      currentPolygon.push(point);
+      undoStack.push({ type: "main", point });
+
+      if (isPolygonClosed(currentPolygon)) {
+        mainPolygon = currentPolygon.slice();
+        mainClosed = true;
+        currentPolygon = [];
+      }
+
+      draw();
+      return;
+    }
+
+    if (mode === "hole") {
+      currentPolygon.push(point);
+      undoStack.push({ type: "hole", point });
+
+      if (isPolygonClosed(currentPolygon)) {
+        holePolygons.push(currentPolygon.slice());
+        currentPolygon = [];
+      }
+
+      draw();
+      return;
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && currentPolygon.length >= 3) {
+      currentPolygon.push({ ...currentPolygon[0] }); // 強制的に閉じる
+
+      if (mode === "main") {
+        mainPolygon = currentPolygon.slice();
+        mainClosed = true;
+      } else if (mode === "hole") {
+        holePolygons.push(currentPolygon.slice());
+      }
+
+      currentPolygon = [];
+      draw();
+    }
   });
 
   resetBtn.addEventListener("click", () => {
     scalePoints = [];
     mainPolygon = [];
     holePolygons = [];
-    currentHole = [];
+    currentPolygon = [];
     undoStack = [];
     redoStack = [];
+    mainClosed = false;
     draw();
   });
 
   undoBtn.addEventListener("click", () => {
     const last = undoStack.pop();
     if (!last) return;
-
     redoStack.push(last);
 
     if (last.type === "main") {
-      mainPolygon.pop();
+      currentPolygon.pop();
+      mainClosed = false;
     } else if (last.type === "hole") {
-      currentHole.pop();
+      currentPolygon.pop();
     } else if (last.type === "scale") {
       scalePoints.pop();
     }
@@ -145,13 +179,12 @@ document.addEventListener("DOMContentLoaded", function () {
   redoBtn.addEventListener("click", () => {
     const last = redoStack.pop();
     if (!last) return;
-
     undoStack.push(last);
 
     if (last.type === "main") {
-      mainPolygon.push(last.point);
+      currentPolygon.push(last.point);
     } else if (last.type === "hole") {
-      currentHole.push(last.point);
+      currentPolygon.push(last.point);
     } else if (last.type === "scale") {
       scalePoints.push(last.point);
     }
@@ -160,8 +193,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   calculateBtn.addEventListener("click", () => {
-    if (mainPolygon.length < 3) {
-      document.getElementById("result").innerText = "壁ポリゴンが未完成です。";
+    if (!isPolygonClosed(mainPolygon)) {
+      document.getElementById("result").innerText = "壁ポリゴンが閉じていません。";
       return;
     }
 
@@ -186,14 +219,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("result").innerText = resultText;
   });
 
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" && currentHole.length > 2) {
-      holePolygons.push([...currentHole, currentHole[0]]);
-      currentHole = [];
-      draw();
-    }
-  });
-
   function draw() {
     const ctx = canvas.getContext("2d");
     if (!ctx || !img) return;
@@ -201,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0);
 
-    // 基準長（点線・青）
+    // スケール線
     if (scalePoints.length === 2) {
       ctx.strokeStyle = "blue";
       ctx.lineWidth = 2;
@@ -211,7 +236,6 @@ document.addEventListener("DOMContentLoaded", function () {
       ctx.lineTo(scalePoints[1].x, scalePoints[1].y);
       ctx.stroke();
       ctx.setLineDash([]);
-
       ctx.fillStyle = "blue";
       ctx.font = "14px sans-serif";
       const midX = (scalePoints[0].x + scalePoints[1].x) / 2;
@@ -219,67 +243,90 @@ document.addEventListener("DOMContentLoaded", function () {
       ctx.fillText("基準", midX + 5, midY - 5);
     }
 
-    // 壁ポリゴン（オレンジ・太線）
-    if (mainPolygon.length > 1) {
+    // 壁ポリゴン（確定済み）
+if (mainPolygon.length > 2) {
+  ctx.beginPath();
+  ctx.moveTo(mainPolygon[0].x, mainPolygon[0].y);
+  for (let i = 1; i < mainPolygon.length; i++) {
+    ctx.lineTo(mainPolygon[i].x, mainPolygon[i].y);
+  }
+
+  if (isPolygonClosed(mainPolygon)) {
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255, 165, 0, 0.4)";
+    ctx.fill();
+  }
+
+  ctx.strokeStyle = "orange";
+  ctx.lineWidth = 3;
+  ctx.setLineDash([]);
+  ctx.stroke();
+}
+
+
+      
+    
+
+    // 壁（メイン）描画中
+    if (currentPolygon.length > 1 && mode === "main") {
       ctx.strokeStyle = "orange";
-      ctx.lineWidth = 3;
-      ctx.setLineDash([]);
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
       ctx.beginPath();
-      ctx.moveTo(mainPolygon[0].x, mainPolygon[0].y);
-      for (let i = 1; i < mainPolygon.length; i++) {
-        ctx.lineTo(mainPolygon[i].x, mainPolygon[i].y);
+      ctx.moveTo(currentPolygon[0].x, currentPolygon[0].y);
+      for (let i = 1; i < currentPolygon.length; i++) {
+        ctx.lineTo(currentPolygon[i].x, currentPolygon[i].y);
       }
       ctx.stroke();
+      ctx.setLineDash([]);
+
+      const last = currentPolygon[currentPolygon.length - 1];
+      ctx.fillStyle = "orange";
+      ctx.font = "14px sans-serif";
+      ctx.fillText("壁（メイン）描画中", last.x + 10, last.y - 10);
     }
 
-    // 開口部（確定済み）緑
-    ctx.strokeStyle = "green";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([]);
+    // 開口部（確定済み）
     holePolygons.forEach(polygon => {
-      if (polygon.length > 1) {
+      if (polygon.length > 2) {
         ctx.beginPath();
         ctx.moveTo(polygon[0].x, polygon[0].y);
         for (let i = 1; i < polygon.length; i++) {
           ctx.lineTo(polygon[i].x, polygon[i].y);
         }
-        ctx.closePath();
+
+        if (isPolygonClosed(polygon)) {
+          ctx.closePath();
+          ctx.fillStyle = "rgba(0, 128, 0, 0.4)";
+          ctx.fill();
+        }
+
+        ctx.strokeStyle = "green";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([]);
         ctx.stroke();
       }
     });
 
-        // 開口部（描画中）緑点線
-    if (currentHole.length > 1) {
+    // 開口部（描画中）
+    if (currentPolygon.length > 1 && mode === "hole") {
       ctx.strokeStyle = "green";
       ctx.lineWidth = 2;
       ctx.setLineDash([5, 5]);
       ctx.beginPath();
-      ctx.moveTo(currentHole[0].x, currentHole[0].y);
-      for (let i = 1; i < currentHole.length; i++) {
-        ctx.lineTo(currentHole[i].x, currentHole[i].y);
+      ctx.moveTo(currentPolygon[0].x, currentPolygon[0].y);
+      for (let i = 1; i < currentPolygon.length; i++) {
+        ctx.lineTo(currentPolygon[i].x, currentPolygon[i].y);
       }
       ctx.stroke();
       ctx.setLineDash([]);
+
+      const last = currentPolygon[currentPolygon.length - 1];
+      ctx.fillStyle = "green";
+      ctx.font = "14px sans-serif";
+      ctx.fillText("開口部描画中", last.x + 10, last.y - 10);
     }
-  }
-
-  // 補助関数：2点間の距離
-  function distance(p1, p2) {
-    const dx = p2.x - p1.x;
-    const dy = p2.y - p1.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  // 補助関数：ポリゴンの面積（Shoelace formula）
-  function polygonArea(points) {
-    let area = 0;
-    for (let i = 0; i < points.length - 1; i++) {
-      area += points[i].x * points[i + 1].y - points[i + 1].x * points[i].y;
-    }
-    return Math.abs(area / 2);
-  }
-});
-
-
+  } // ← draw() 関数の閉じ括弧
+}); // ← DOMContentLoaded の閉じ括弧
 
 
