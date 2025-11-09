@@ -103,50 +103,60 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (mode === "main") {
-      if (mainClosed) return;
+  if (mainClosed) return;
 
-      currentPolygon.push(point);
-      undoStack.push({ type: "main", point });
+  currentPolygon.push(point);
+  undoStack.push({ type: "main", point });
 
-      if (isPolygonClosed(currentPolygon)) {
-        mainPolygon = currentPolygon.slice();
-        mainClosed = true;
-        currentPolygon = [];
-      }
+  if (isPolygonClosed(currentPolygon)) {
+    mainPolygon = currentPolygon.slice();
+    mainClosed = true;
+    currentPolygon = [];
 
-      draw();
-      return;
-    }
+    // グローバルに公開
+    window.mainPolygon = mainPolygon;
+  }
 
-    if (mode === "hole") {
-      currentPolygon.push(point);
-      undoStack.push({ type: "hole", point });
+  draw();
+  return;
+}
 
-      if (isPolygonClosed(currentPolygon)) {
-        holePolygons.push(currentPolygon.slice());
-        currentPolygon = [];
-      }
+if (mode === "hole") {
+  currentPolygon.push(point);
+  undoStack.push({ type: "hole", point });
 
-      draw();
-      return;
-    }
+  if (isPolygonClosed(currentPolygon)) {
+    holePolygons.push(currentPolygon.slice());
+    currentPolygon = [];
+
+    // グローバルに公開
+    window.holePolygons = holePolygons;
+  }
+
+  draw();
+  return;
+}
+
   });
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && currentPolygon.length >= 3) {
-      currentPolygon.push({ ...currentPolygon[0] }); // 強制的に閉じる
+  if (e.key === "Enter" && currentPolygon.length >= 3) {
+    currentPolygon.push({ ...currentPolygon[0] }); // 強制的に閉じる
 
-      if (mode === "main") {
-        mainPolygon = currentPolygon.slice();
-        mainClosed = true;
-      } else if (mode === "hole") {
-        holePolygons.push(currentPolygon.slice());
-      }
-
-      currentPolygon = [];
-      draw();
+    if (mode === "main") {
+      mainPolygon = currentPolygon.slice();
+      mainClosed = true;
+      window.mainPolygon = mainPolygon; // ← これを追加！
+    } else if (mode === "hole") {
+      holePolygons.push(currentPolygon.slice());
+      window.holePolygons = holePolygons; // ← これを追加！
     }
-  });
+
+    currentPolygon = [];
+    draw();
+  }
+});
+
 
   resetBtn.addEventListener("click", () => {
     scalePoints = [];
@@ -347,6 +357,9 @@ if (mainPolygon.length > 2) {
     return Math.abs(area / 2);
   };
 })();
+
+window.getPxPerCm = getPxPerCm;
+
 
 
 

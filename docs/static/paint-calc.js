@@ -2,15 +2,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const paintCalcBtn = document.getElementById("paintCalcBtn");
 
   paintCalcBtn.addEventListener("click", () => {
-    const paintRate = parseFloat(document.getElementById("paintPerM2").value); // kg/m²
-    const coatCount = parseInt(document.getElementById("coatTimes").value);   // 回数
-    const lossRate = parseFloat(document.getElementById("lossPercent").value); // %
-    const canSize = parseFloat(document.getElementById("canSize").value);     // kg/缶
+    const paintRate = parseFloat(document.getElementById("paintPerM2").value);
+    const coatCount = parseInt(document.getElementById("coatTimes").value);
+    const lossRate = parseFloat(document.getElementById("lossPercent").value);
+    const canSize = parseFloat(document.getElementById("canSize").value);
 
+    // グローバルから取得
+    const mainPolygon = window.mainPolygon || [];
+    const holePolygons = window.holePolygons || [];
+    const getPxPerCm = window.getPxPerCm || function () { return 1; };
+
+    // 入力値とポリゴンの妥当性チェック
     if (
-      isNaN(paintRate) || isNaN(coatCount) ||
-      isNaN(lossRate) || isNaN(canSize) ||
-      typeof mainPolygon === "undefined" || mainPolygon.length < 3
+      isNaN(paintRate) || paintRate <= 0 ||
+      isNaN(coatCount) || coatCount <= 0 ||
+      isNaN(lossRate) || lossRate < 0 ||
+      isNaN(canSize) || canSize <= 0 ||
+      mainPolygon.length < 3
     ) {
       document.getElementById("paintResult").innerText = "入力値が不足しています。";
       return;
@@ -38,3 +46,4 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("paintResult").innerText = resultText;
   });
 });
+
