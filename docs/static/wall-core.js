@@ -328,5 +328,25 @@ if (mainPolygon.length > 2) {
     }
   } // ← draw() 関数の閉じ括弧
 }); // ← DOMContentLoaded の閉じ括弧
+(function () {
+  /**
+   * 2Dポリゴンの面積を計算する関数
+   * @param {Array} polygon - [{x: Number, y: Number}, ...]
+   * @returns {Number} 面積（ピクセル単位）
+   */
+  window.polygonArea = window.polygonArea || function (polygon) {
+    if (!Array.isArray(polygon) || polygon.length < 3) return 0;
+
+    let area = 0;
+    const n = polygon.length;
+    for (let i = 0; i < n; i++) {
+      const { x: x1, y: y1 } = polygon[i];
+      const { x: x2, y: y2 } = polygon[(i + 1) % n];
+      area += (x1 * y2 - x2 * y1);
+    }
+    return Math.abs(area / 2);
+  };
+})();
+
 
 
