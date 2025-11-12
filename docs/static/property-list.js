@@ -30,27 +30,29 @@ function renderProperties(data) {
       ? `<iframe src="${property.map}" width="100%" height="200" style="border:0;" allowfullscreen></iframe>`
       : '';
 
-    // 駐車場の表示テキストを生成
     let parkingText = '';
     switch (property.parking) {
-      case 0:
-        parkingText = 'なし';
-        break;
-      case 1:
-        parkingText = '1台（家賃込み）';
-        break;
-      case 2:
-        parkingText = '2台（+3,800円）';
-        break;
-      case 3:
-        parkingText = '3台（+7,600円）';
-        break;
-      default:
-        parkingText = '不明';
+      case 0: parkingText = 'なし'; break;
+      case 1: parkingText = '1台（家賃込み）'; break;
+      case 2: parkingText = '2台（+3,800円）'; break;
+      case 3: parkingText = '3台（+7,600円）'; break;
+      default: parkingText = '不明';
     }
 
+    const imageHtml = property.images?.[0]
+      ? `<img src="data/${property.folder}/${property.images[0]}" alt="${property.name}">`
+      : '';
+
+    const noteHtml = `
+      <p class="contract-note">
+        Gmail以外のメールアドレスをご利用の場合も、右記アドレス、
+        <a href="mailto:info@2two.2box.jp">info@2two.2box.jp</a> にて承りますのでご安心ください。<br>
+        どうぞよろしくお願いいたします。
+      </p>
+    `;
+
     card.innerHTML = `
-      <img src="data/${property.folder}/${property.images[0]}" alt="${property.name}">
+      ${imageHtml}
       <div class="property-details">
         <div class="property-title">${property.name}</div>
         <div class="property-price">¥${property.price}（管理費込み: ¥${property.price + (property.management_fee || 0)}）</div>
@@ -62,14 +64,22 @@ function renderProperties(data) {
         <p><strong>鍵交換:</strong> ${property.key_exchange ? 'あり' : 'なし'}</p>
         <p><strong>火災保険:</strong> ${property.fire_insurance ? '加入' : '未加入'}</p>
         <p><strong>家賃保証:</strong> ${property.guarantee}</p>
-        <p><strong>引越し費用合計:</strong> ¥${totalCost}</p>
         <p>${property.description}</p>
+        <p><strong>引越し費用合計:</strong> ¥${totalCost}</p>
         <button onclick="editProperty(${index})">修正する</button>
+        <button onclick="contract('${property.name}')">仮契約する</button>
+        ${noteHtml}
       </div>
     `;
 
     container.appendChild(card);
   });
+}
+
+// 仮契約フォームを開く関数
+function contract(name) {
+  const formURL = `https://docs.google.com/forms/d/e/1FAIpQLSchgR5NHR6pKi_vBTqEuRQA2Ga4kIG02oluW4QhDGir67l4Lg/viewform?entry.123456=${encodeURIComponent(name)}`;
+  window.open(formURL, '_blank');
 }
 
 // 編集フォームを表示する関数
@@ -85,18 +95,21 @@ function editProperty(index) {
       <label>敷金: <input type="number" id="edit-deposit" value="${property.deposit}"></label><br>
       <label>鍵交換: 
         <select id="edit-key">
-          <option value="true" ${property.key_exchange ? 'selected' : ''}>あり</option>
-          <option value="false" ${!property.key_exchange ? 'selected' : ''}>なし</option>
+          <option value="">選択してください</option>
+          <option value="true" ${property.key_exchange === true ? 'selected' : ''}>あり</option>
+          <option value="false" ${property.key_exchange === false ? 'selected' : ''}>なし</option>
         </select>
       </label><br>
       <label>火災保険: 
         <select id="edit-fire">
-          <option value="true" ${property.fire_insurance ? 'selected' : ''}>加入</option>
-          <option value="false" ${!property.fire_insurance ? 'selected' : ''}>未加入</option>
+          <option value="">選択してください</option>
+          <option value="true" ${property.fire_insurance === true ? 'selected' : ''}>加入</option>
+          <option value="false" ${property.fire_insurance === false ? 'selected' : ''}>未加入</option>
         </select>
       </label><br>
       <label>家賃保証: 
         <select id="edit-guarantee">
+          <option value="">選択してください</option>
           <option value="アルファ" ${property.guarantee === 'アルファ' ? 'selected' : ''}>アルファ</option>
           <option value="CIZ宅建保証" ${property.guarantee === 'CIZ宅建保証' ? 'selected' : ''}>CIZ宅建保証</option>
           <option value="ナップ" ${property.guarantee === 'ナップ' ? 'selected' : ''}>ナップ</option>
@@ -104,6 +117,7 @@ function editProperty(index) {
       </label><br>
       <label>駐車場: 
         <select id="edit-parking">
+          <option value="">選択してください</option>
           <option value="0" ${property.parking === 0 ? 'selected' : ''}>なし</option>
           <option value="1" ${property.parking === 1 ? 'selected' : ''}>1台（家賃込み）</option>
           <option value="2" ${property.parking === 2 ? 'selected' : ''}>2台（+3,800円）</option>
@@ -122,10 +136,17 @@ function saveProperty(index) {
   const location = document.getElementById('edit-location').value;
   const layout = document.getElementById('edit-layout').value;
   const deposit = parseInt(document.getElementById('edit-deposit').value, 10);
-  const key_exchange = document.getElementById('edit-key').value === 'true';
-  const fire_insurance = document.getElementById('edit-fire').value === 'true';
-  const guarantee = document.getElementById('edit-guarantee').value;
-  const parking = parseInt(document.getElementById('edit-parking').value, 10);
+
+  const keyVal = document.getElementById('edit-key').value;
+  const key_exchange = keyVal === "" ? null : keyVal === 'true';
+
+  const fireVal = document.getElementById('edit-fire').value;
+  const fire_insurance = fireVal === "" ? null : fireVal === 'true';
+
+  const guarantee = document.getElementById('edit-guarantee').value || null;
+
+  const parkingVal = document.getElementById('edit-parking').value;
+  const parking = parkingVal === "" ? null : parseInt(parkingVal, 10);
 
   const property = window.propertyData[index];
   property.location = location;
@@ -138,4 +159,3 @@ function saveProperty(index) {
 
   renderProperties(window.propertyData);
 }
-

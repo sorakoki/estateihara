@@ -33,11 +33,21 @@
   <main>
     <button onclick="location.href='property-list.html'">物件一覧を見る</button>
     <section id="properties">
-      <h2>物件</h2>
-      <div class="property-list" id="property-list">
-        <!-- JavaScriptで物件カードを挿入 -->
-      </div>
-    </section>
+  <h2>物件</h2>
+  <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+    <a href="property-list.html">
+      <img src="data/山田前/0002.jpg" alt="山田前の貸家" style="width:100%; max-width:400px; border-radius:8px;" />
+    </a>
+    <a href="property-list.html">
+      <img src="data/東市来/0010.jpg" alt="東市来の貸家" style="width:100%; max-width:400px; border-radius:8px;" />
+    </a>
+  </div>
+
+  <div class="property-list" id="property-list">
+    <!-- JavaScriptで物件カードを挿入 -->
+  </div>
+</section>
+
 
     <section>
       <h3>事務所のこと</h3>
