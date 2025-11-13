@@ -80,7 +80,8 @@
             <p><strong>引越し費用合計:</strong> ¥${getTotalCost(p.moving_cost)}</p>
             <p>${p.description}</p>
             ${imagesHtml}
-            <button onclick="contract('${p.name}')">仮契約する</button>
+            <button onclick="contract('${p.id}')">仮契約する</button>
+
           `;
           container.appendChild(div);
         });
@@ -92,8 +93,10 @@
       });
 
     function contract(name) {
-      alert(`仮契約処理を開始します（物件: ${name}）`);
-    }
+  const formUrl = "https://docs.google.com/forms/d/1CMgVFRmD8rOcRMm-Q4uRFEzutwwC_DukJRl-fpjaA5Y/preview";
+  window.open(formUrl, "_blank");
+}
+
   </script>
 </body>
 </html>

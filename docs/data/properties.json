@@ -1,5 +1,6 @@
 [
   {
+    "id": "0010",
     "name": "山田町の貸家",
     "folder": "山田前",
     "images": [
@@ -11,7 +12,7 @@
       "0007.jpg",
       "0008.jpg"
     ],
-    "location": "鹿児島市山田町2289-1",
+    "location": "鹿児島市山田町2327",
     "layout": "3LDK",
     "price": 58000,
     "management_fee": 2000,
@@ -30,6 +31,7 @@
     "description": "静かな住宅街にある広々とした貸家です。"
   },
   {
+    "id": "0011",
     "name": "貸家、東",
     "folder": "東市来",
     "images": [
