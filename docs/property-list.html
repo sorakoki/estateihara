@@ -38,7 +38,6 @@
   <div id="propertyList"></div>
 
   <script>
-    // 駐車場の表示テキスト
     function getParkingText(value) {
       switch (value) {
         case 0: return 'なし';
@@ -49,12 +48,10 @@
       }
     }
 
-    // 引越し費用の合計
     function getTotalCost(costObj) {
       return costObj ? Object.values(costObj).reduce((a, b) => a + b, 0) : 0;
     }
 
-    // JSON読み込みと表示
     fetch('data/properties.json')
       .then(res => res.json())
       .then(data => {
@@ -63,7 +60,6 @@
           const div = document.createElement('div');
           div.className = 'property-card';
 
-          // 画像パスを組み立てる
           const imagePaths = p.images.map(file => `data/${p.folder}/${file}`);
           const imagesHtml = imagePaths.map(src => `<img src="${src}" alt="${p.name}">`).join('');
 
@@ -80,8 +76,7 @@
             <p><strong>引越し費用合計:</strong> ¥${getTotalCost(p.moving_cost)}</p>
             <p>${p.description}</p>
             ${imagesHtml}
-            <button onclick="contract('${p.id}')">仮契約する</button>
-tre
+            <button onclick="contract('${p.name}')">仮契約する</button>
           `;
           container.appendChild(div);
         });
@@ -92,13 +87,13 @@ tre
         console.error("JSON読み込みエラー:", err);
       });
 
-    function contract(name) {
-  const formUrl = "https://docs.google.com/forms/d/1CMgVFRmD8rOcRMm-Q4uRFEzutwwC_DukJRl-fpjaA5Y/preview";
-  window.open(formUrl, "_blank");
-}
-
+    function contract(propertyName) {
+      const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSfslUAl9l_ZKXZeRNPCLqUHMyAsM0VLm77kQhSMFpmyQKoDIQ/viewform";
+      const entryId = "entry.2132483242"; // ← フォームの物件名フィールドID
+      const url = `${baseUrl}?${entryId}=${encodeURIComponent(propertyName)}`;
+      window.open(url, "_blank");
+    }
   </script>
 </body>
 </html>
-
 

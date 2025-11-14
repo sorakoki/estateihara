@@ -77,10 +77,22 @@ function renderProperties(data) {
 }
 
 // 仮契約フォームを開く関数
-function contract(name) {
-  const formURL = `https://docs.google.com/forms/d/e/1FAIpQLSchgR5NHR6pKi_vBTqEuRQA2Ga4kIG02oluW4QhDGir67l4Lg/viewform?entry.123456=${encodeURIComponent(name)}`;
-  window.open(formURL, '_blank');
+const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSchgR5NHR6pKi_vBTqEuRQA2Ga4kIG02oluW4QhDGir67l4Lg/viewform";
+const entryID = "entry.1478536521";
+function contract(propertyName) {
+  const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSchgR5NHR6pKi_vBTqEuRQA2Ga4kIG02oluW4QhDGir67l4Lg/viewform";
+  const entryId = "entry.1478536521"; // ← 正しい物件名フィールドID
+  const url = `${baseUrl}?${entryId}=${encodeURIComponent(propertyName)}`;
+  window.open(url, "_blank");
 }
+
+function openFormWithProperty(propertyName) {
+  const encoded = encodeURIComponent(propertyName);
+  const fullURL = `${formURL}?${entryID}=${encoded}`;
+  window.open(fullURL, "_blank");
+}
+
+
 
 // 編集フォームを表示する関数
 function editProperty(index) {
