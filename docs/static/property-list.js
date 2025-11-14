@@ -76,22 +76,13 @@ function renderProperties(data) {
   });
 }
 
-// 仮契約フォームを開く関数
-const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSchgR5NHR6pKi_vBTqEuRQA2Ga4kIG02oluW4QhDGir67l4Lg/viewform";
-const entryID = "entry.1478536521";
+// 仮契約フォームを開く関数（一本化）
 function contract(propertyName) {
   const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSchgR5NHR6pKi_vBTqEuRQA2Ga4kIG02oluW4QhDGir67l4Lg/viewform";
-  const entryId = "entry.1478536521"; // ← 正しい物件名フィールドID
-  const url = `${baseUrl}?${entryId}=${encodeURIComponent(propertyName)}`;
-  window.open(url, "_blank");
+  const entryId = "entry.1478536521"; // フォームの物件名フィールドID
+  const url = `${baseUrl}?usp=pp_url&${entryId}=${encodeURIComponent(propertyName)}`;
+  window.open(url, "_blank", "noopener,noreferrer");
 }
-
-function openFormWithProperty(propertyName) {
-  const encoded = encodeURIComponent(propertyName);
-  const fullURL = `${formURL}?${entryID}=${encoded}`;
-  window.open(fullURL, "_blank");
-}
-
 
 
 // 編集フォームを表示する関数
@@ -147,7 +138,7 @@ function editProperty(index) {
 function saveProperty(index) {
   const location = document.getElementById('edit-location').value;
   const layout = document.getElementById('edit-layout').value;
-  const deposit = parseInt(document.getElementById('edit-deposit').value, 10);
+  const deposit = parseInt(document.getElementById('edit-deposit').value, 10) || 0;
 
   const keyVal = document.getElementById('edit-key').value;
   const key_exchange = keyVal === "" ? null : keyVal === 'true';
