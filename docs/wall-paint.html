@@ -9,8 +9,10 @@
 <body>
   <h1>壁面積と塗装量の計算</h1>
 
+  <!-- 画像選択 -->
   <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
 
+  <!-- キャンバス -->
   <canvas id="canvas"></canvas>
 
   <!-- 🧭 操作ガイド -->
@@ -27,6 +29,7 @@
     </ul>
   </div>
 
+  <!-- 操作ボタン -->
   <div class="controls">
     <label>基準長（cm）：<input type="number" id="refCm" value="200" min="1"></label><br>
     <button id="scaleModeBtn">スケール線設定</button>
@@ -38,9 +41,11 @@
     <button id="calculateBtn">面積を計算</button>
   </div>
 
+  <!-- 結果表示 -->
   <div id="result"></div>
   <div id="advice"></div>
 
+  <!-- 塗料計算 -->
   <div id="paintControls" class="controls">
     <strong>▼ 外壁塗装の塗料量計算</strong><br>
     <label>塗料標準塗布量（kg/m²）：<input type="number" id="paintPerM2" value="0.11" step="0.01" min="0.01"></label>
@@ -57,8 +62,9 @@
 
   <div id="paintResult"></div>
 
-<script src="static/wall-core.js" defer></script>
-<script src="static/paint-calc.js" defer></script>
+  <!-- スクリプト -->
+  <script src="static/wall-core.js" defer></script>
+  <script src="static/paint-calc.js" defer></script>
 </body>
 </html>
 
