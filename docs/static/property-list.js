@@ -1,3 +1,19 @@
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('data/properties.json')
+    .then(response => response.json())
+    .then(data => {
+      window.propertyData = data;
+      renderProperties(data);
+    })
+    .catch(err => {
+      const container = document.getElementById("property-list");
+      if (container) {
+        container.innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
+      }
+      console.error("JSON読み込みエラー:", err);
+    });
+});
+
 // JSONを読み込んで表示
 fetch('data/properties.json')
   .then(response => response.json())

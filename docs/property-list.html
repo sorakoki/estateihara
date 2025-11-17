@@ -35,7 +35,7 @@
 </head>
 <body>
   <h2>物件一覧</h2>
-  <div id="propertyList"></div>
+  <div id="property-list"></div>
 
   <script>
     function getParkingText(value) {
@@ -57,8 +57,11 @@
       .then(data => {
         const container = document.getElementById('propertyList');
         data.forEach(p => {
-          console.log("物件名:", p.name);
-          console.log("生成されたID:", anchorId);
+  let anchorId = "property-" + p.id;
+  console.log("物件名:", p.name);
+  console.log("生成されたID:", anchorId);
+});
+
 
 
 
