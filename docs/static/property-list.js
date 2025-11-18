@@ -22,7 +22,7 @@ function renderProperties(data) {
     const card = document.createElement('div');
     card.className = 'property';
 
-   const anchorId = `${property.folder}-${property.id}`;
+   const anchorId = property.id;
 card.id = anchorId;
 
 
