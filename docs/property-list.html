@@ -38,83 +38,77 @@
   <div id="property-list"></div>
 
   <script>
-    function getParkingText(value) {
-      switch (value) {
-        case 0: return 'なし';
-        case 1: return '1台（家賃込み）';
-        case 2: return '2台（+3,800円）';
-        case 3: return '3台（+7,600円）';
-        default: return '不明';
-      }
+  function getParkingText(value) {
+    switch (value) {
+      case 0: return 'なし';
+      case 1: return '1台（家賃込み）';
+      case 2: return '2台（+3,800円）';
+      case 3: return '3台（+7,600円）';
+      default: return '不明';
     }
+  }
 
-    function getTotalCost(costObj) {
-      return costObj ? Object.values(costObj).reduce((a, b) => a + b, 0) : 0;
-    }
+  function getTotalCost(costObj) {
+    return costObj ? Object.values(costObj).reduce((a, b) => a + b, 0) : 0;
+  }
 
-    fetch('data/properties.json')
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('propertyList');
-        data.forEach(p => {
-  let anchorId = "property-" + p.id;
-  console.log("物件名:", p.name);
-  console.log("生成されたID:", anchorId);
-});
+  fetch('data/properties.json')
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('property-list');
+      data.forEach(p => {
+        const anchorId = `${p.folder}-${p.images[0].split('.')[0]}`;
+        console.log("物件名:", p.name);
+        console.log("生成されたID:", anchorId);
 
+        const div = document.createElement('div');
+        div.className = 'property-card';
+        div.id = anchorId;
 
+        const imagePaths = p.images.map(file => `data/${p.folder}/${file}`);
+        const imagesHtml = imagePaths.map(src => `<img src="${src}" alt="${p.name}">`).join('');
 
-
-          const anchorId = `${p.folder}-${p.images[0].split('.')[0]}`;
-          const div = document.createElement('div');
-          div.className = 'property-card';
-          div.id = anchorId;
-
-          const imagePaths = p.images.map(file => `data/${p.folder}/${file}`);
-          const imagesHtml = imagePaths.map(src => `<img src="${src}" alt="${p.name}">`).join('');
-
-          div.innerHTML = `
-            <h3>${p.name}</h3>
-            <p><strong>地域:</strong> ${p.location}</p>
-            <p><strong>間取り:</strong> ${p.layout}</p>
-            <p><strong>家賃:</strong> ¥${p.price}（管理費込み: ¥${p.price + (p.management_fee || 0)}）</p>
-            <p><strong>敷金:</strong> ¥${p.deposit}</p>
-            <p><strong>駐車場:</strong> ${getParkingText(p.parking)}</p>
-            <p><strong>鍵交換:</strong> ${p.key_exchange ? 'あり' : 'なし'}</p>
-            <p><strong>火災保険:</strong> ${p.fire_insurance ? '加入' : '未加入'}</p>
-            <p><strong>家賃保証:</strong> ${p.guarantee}</p>
-            <p><strong>引越し費用合計:</strong> ¥${getTotalCost(p.moving_cost)}</p>
-            <p>${p.description}</p>
-            ${imagesHtml}
-            <button onclick="contract('${p.name}')">仮契約する</button>
-          `;
-          container.appendChild(div);
-        });
-      })
-      .catch(err => {
-        const container = document.getElementById('propertyList');
-        container.innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
-        console.error("JSON読み込みエラー:", err);
+        div.innerHTML = `
+          <h3>${p.name}</h3>
+          <p><strong>地域:</strong> ${p.location}</p>
+          <p><strong>間取り:</strong> ${p.layout}</p>
+          <p><strong>家賃:</strong> ¥${p.price}（管理費込み: ¥${p.price + (p.management_fee || 0)}）</p>
+          <p><strong>敷金:</strong> ¥${p.deposit}</p>
+          <p><strong>駐車場:</strong> ${getParkingText(p.parking)}</p>
+          <p><strong>鍵交換:</strong> ${p.key_exchange ? 'あり' : 'なし'}</p>
+          <p><strong>火災保険:</strong> ${p.fire_insurance ? '加入' : '未加入'}</p>
+          <p><strong>家賃保証:</strong> ${p.guarantee}</p>
+          <p><strong>引越し費用合計:</strong> ¥${getTotalCost(p.moving_cost)}</p>
+          <p>${p.description}</p>
+          ${imagesHtml}
+          <button onclick="contract('${p.name}')">仮契約する</button>
+        `;
+        container.appendChild(div);
       });
-
-        function contract(propertyName) {
-      const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf0__cCjAhoCB53r2AdZYqpSvI4da5dBvY2cMa7HaqxSYghpw/viewform";
-      const entryId = "entry.2035525307";
-      const url = `${baseUrl}?usp=pp_url&${entryId}=${encodeURIComponent(propertyName)}`;
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-
-    // ← ここから追加！
-    window.addEventListener('load', () => {
-      const hash = window.location.hash;
-      if (hash) {
-        const target = document.querySelector(hash);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
+    })
+    .catch(err => {
+      const container = document.getElementById('property-list');
+      container.innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
+      console.error("JSON読み込みエラー:", err);
     });
-  </script>
+
+  function contract(propertyName) {
+    const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf0__cCjAhoCB53r2AdZYqpSvI4da5dBvY2cMa7HaqxSYghpw/viewform";
+    const entryId = "entry.2035525307";
+    const url = `${baseUrl}?usp=pp_url&${entryId}=${encodeURIComponent(propertyName)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  window.addEventListener('load', () => {
+    const hash = window.location.hash;
+    if (hash) {
+      const target = document.querySelector(hash);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+</script>
 
 </body>
 </html>

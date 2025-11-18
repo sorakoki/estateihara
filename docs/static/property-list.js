@@ -14,29 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// JSONを読み込んで表示
-fetch('data/properties.json')
-  .then(response => response.json())
-  .then(data => {
-    window.propertyData = data; // グローバルに保持
-    renderProperties(data);
-  })
-  .catch(err => {
-    const container = document.getElementById("property-list");
-    if (container) {
-      container.innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
-    }
-    console.error("JSON読み込みエラー:", err);
-  });
-
-// 物件一覧を表示する関数
 function renderProperties(data) {
   const container = document.getElementById('property-list');
-  container.innerHTML = ''; // 初期化
+  container.innerHTML = '';
 
   data.forEach((property, index) => {
     const card = document.createElement('div');
     card.className = 'property';
+
+    const anchorId = `${property.folder}-${property.id}`;
+    card.id = anchorId;
 
     const totalCost = property.moving_cost
       ? Object.values(property.moving_cost).reduce((a, b) => a + b, 0)
@@ -91,6 +78,7 @@ function renderProperties(data) {
     container.appendChild(card);
   });
 }
+
 
 // 仮契約フォームを開く関数（一本化）
 function contract(propertyName) {
