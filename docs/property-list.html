@@ -56,37 +56,36 @@
     .then(res => res.json())
     .then(data => {
       const container = document.getElementById('property-list');
-      data.forEach(p => {
-  const anchorId = p.id;
-  console.log("物件名:", p.name);
-  console.log("生成されたID:", anchorId);
-});
+  data.forEach(p => {
+    const anchorId = p.id;
+    console.log("物件名:", p.name);
+    console.log("生成されたID:", anchorId);
 
-        const div = document.createElement('div');
-        div.className = 'property-card';
-        div.id = anchorId;
+    const div = document.createElement('div');
+    div.className = 'property-card';
+    div.id = anchorId;
 
-        const imagePaths = p.images.map(file => `data/${p.folder}/${file}`);
-        const imagesHtml = imagePaths.map(src => `<img src="${src}" alt="${p.name}">`).join('');
+    const imagePaths = (p.images || []).map(file => `data/${p.folder}/${file}`);
+    const imagesHtml = imagePaths.map(src => `<img src="${src}" alt="${p.name}">`).join('');
 
-        div.innerHTML = `
-          <h3>${p.name}</h3>
-          <p><strong>地域:</strong> ${p.location}</p>
-          <p><strong>間取り:</strong> ${p.layout}</p>
-          <p><strong>家賃:</strong> ¥${p.price}（管理費込み: ¥${p.price + (p.management_fee || 0)}）</p>
-          <p><strong>敷金:</strong> ¥${p.deposit}</p>
-          <p><strong>駐車場:</strong> ${getParkingText(p.parking)}</p>
-          <p><strong>鍵交換:</strong> ${p.key_exchange ? 'あり' : 'なし'}</p>
-          <p><strong>火災保険:</strong> ${p.fire_insurance ? '加入' : '未加入'}</p>
-          <p><strong>家賃保証:</strong> ${p.guarantee}</p>
-          <p><strong>引越し費用合計:</strong> ¥${getTotalCost(p.moving_cost)}</p>
-          <p>${p.description}</p>
-          ${imagesHtml}
-          <button onclick="contract('${p.name}')">仮契約する</button>
-        `;
-        container.appendChild(div);
-      });
-    })
+    div.innerHTML = `
+      <h3>${p.name}</h3>
+      <p><strong>地域:</strong> ${p.location}</p>
+      <p><strong>間取り:</strong> ${p.layout}</p>
+      <p><strong>家賃:</strong> ¥${p.price}（管理費込み: ¥${p.price + (p.management_fee || 0)}）</p>
+      <p><strong>敷金:</strong> ¥${p.deposit}</p>
+      <p><strong>駐車場:</strong> ${getParkingText(p.parking)}</p>
+      <p><strong>鍵交換:</strong> ${p.key_exchange ? 'あり' : 'なし'}</p>
+      <p><strong>火災保険:</strong> ${p.fire_insurance ? '加入' : '未加入'}</p>
+      <p><strong>家賃保証:</strong> ${p.guarantee}</p>
+      <p><strong>引越し費用合計:</strong> ¥${getTotalCost(p.moving_cost)}</p>
+      <p>${p.description}</p>
+      ${imagesHtml}
+      <button onclick="contract('${p.name}')">仮契約する</button>
+    `;
+    container.appendChild(div);
+  })
+})
     .catch(err => {
       const container = document.getElementById('property-list');
       container.innerHTML = "<p>物件情報の読み込みに失敗しました。</p>";
