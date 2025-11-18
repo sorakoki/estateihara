@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       window.propertyData = data;
       renderProperties(data);
+      scrollToHash(); // ← スクロール処理を呼び出す
     })
     .catch(err => {
       const container = document.getElementById("property-list");
@@ -13,6 +14,29 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error("JSON読み込みエラー:", err);
     });
 });
+
+function scrollToHash() {
+  const hash = decodeURIComponent(window.location.hash);
+  if (hash) {
+    const target = document.querySelector(hash);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+}
+
+
+// ↓ .then() の外に関数定義を置く！
+function scrollToHash() {
+  const hash = decodeURIComponent(window.location.hash);
+  if (hash) {
+    const target = document.querySelector(hash);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+}
+
 
 function renderProperties(data) {
   const container = document.getElementById('property-list');
