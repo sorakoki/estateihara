@@ -43,11 +43,18 @@ function renderProperties(data) {
   container.innerHTML = '';
 
   data.forEach((property, index) => {
-    const card = document.createElement('div');
-    card.className = 'property';
+  const card = document.createElement('div');
+  card.className = 'property';
 
-   const anchorId = property.id;
-card.id = anchorId;
+  const anchorId = property.id;
+  card.id = anchorId;
+
+  // 🔍 ここで画像パスを確認！
+  const imagePath = `data/${property.folder}/${property.images[0]}`;
+
+  console.log(`描画中: ${property.name}`);
+  console.log(`画像パス: ${imagePath}`);
+
 
 
     const totalCost = property.moving_cost
@@ -67,9 +74,12 @@ card.id = anchorId;
       default: parkingText = '不明';
     }
 
-    const imageHtml = property.images?.[0]
-      ? `<img src="data/${property.folder}/${property.images[0]}" alt="${property.name}">`
-      : '';
+    const imageHtml = property.images?.length
+  ? property.images.map(img =>
+      `<img src="data/${property.folder}/${img}" alt="${property.name}" style="max-width: 100%; margin-bottom: 8px;">`
+    ).join('')
+  : '';
+
 
     const noteHtml = `
       <p class="contract-note">
@@ -188,6 +198,8 @@ function saveProperty(index) {
   property.fire_insurance = fire_insurance;
   property.guarantee = guarantee;
   property.parking = parking;
+
+  console.log('保存後の物件データ:', window.propertyData); // ← ここを修正！
 
   renderProperties(window.propertyData);
 }
