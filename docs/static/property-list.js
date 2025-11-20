@@ -117,11 +117,12 @@ function renderProperties(data) {
 
 // 仮契約フォームを開く関数（一本化）
 function contract(propertyName) {
-  const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf0__cCjAhoCB53r2AdZYqpSvI4da5dBvY2cMa7HaqxSYghpw/viewform?usp=pp_url&entry.2035525307=%E5%B1%B1%E7%94%B0%E8%B2%B8%E5%AE%B6";
-  const entryId = "entry.1478536521"; // フォームの物件名フィールドID
+  const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf0__cCjAhoCB53r2AdZYqpSvI4da5dBvY2cMa7HaqxSYghpw/viewform";
+  const entryId = "entry.2035525307"; // ← 物件名のフィールドID（こっちが正しければ）
   const url = `${baseUrl}?usp=pp_url&${entryId}=${encodeURIComponent(propertyName)}`;
   window.open(url, "_blank", "noopener,noreferrer");
 }
+
 
 
 // 編集フォームを表示する関数
