@@ -15,15 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function scrollToHash() {
-  const hash = decodeURIComponent(window.location.hash);
-  if (hash) {
-    const target = document.querySelector(hash);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-}
+
 
 
 // ↓ .then() の外に関数定義を置く！
@@ -129,28 +121,39 @@ function contract(propertyName) {
 function editProperty(index) {
   const container = document.getElementById('property-list');
   const property = window.propertyData[index];
+  if (!property) return;
 
   const formHtml = `
     <div class="edit-form">
       <h3>${property.name} の修正</h3>
-      <label>地域: <input type="text" id="edit-location" value="${property.location}"></label><br>
-      <label>間取り: <input type="text" id="edit-layout" value="${property.layout}"></label><br>
-      <label>敷金: <input type="number" id="edit-deposit" value="${property.deposit}"></label><br>
-      <label>鍵交換: 
+
+      <label>地域:
+        <input type="text" id="edit-location" value="${property.location || ''}">
+      </label><br>
+
+      <label>間取り:
+        <input type="text" id="edit-layout" value="${property.layout || ''}">
+      </label><br>
+
+      
+
+      <label>鍵交換:
         <select id="edit-key">
           <option value="">選択してください</option>
           <option value="true" ${property.key_exchange === true ? 'selected' : ''}>あり</option>
           <option value="false" ${property.key_exchange === false ? 'selected' : ''}>なし</option>
         </select>
       </label><br>
-      <label>火災保険: 
+
+      <label>火災保険:
         <select id="edit-fire">
           <option value="">選択してください</option>
           <option value="true" ${property.fire_insurance === true ? 'selected' : ''}>加入</option>
           <option value="false" ${property.fire_insurance === false ? 'selected' : ''}>未加入</option>
         </select>
       </label><br>
-      <label>家賃保証: 
+
+      <label>家賃保証:
         <select id="edit-guarantee">
           <option value="">選択してください</option>
           <option value="アルファ" ${property.guarantee === 'アルファ' ? 'selected' : ''}>アルファ</option>
@@ -158,7 +161,8 @@ function editProperty(index) {
           <option value="ナップ" ${property.guarantee === 'ナップ' ? 'selected' : ''}>ナップ</option>
         </select>
       </label><br>
-      <label>駐車場: 
+
+      <label>駐車場:
         <select id="edit-parking">
           <option value="">選択してください</option>
           <option value="0" ${property.parking === 0 ? 'selected' : ''}>なし</option>
@@ -167,7 +171,14 @@ function editProperty(index) {
           <option value="3" ${property.parking === 3 ? 'selected' : ''}>3台（+7,600円）</option>
         </select>
       </label><br>
-      <button onclick="saveProperty(${index})">保存</button>
+
+      <label>家賃:
+  <input type="number" id="edit-rent" value="${property.rent ?? ''}">
+</label><br>
+
+
+     <button onclick="saveProperty(${index})">保存</button>
+
     </div>
   `;
 
@@ -176,31 +187,48 @@ function editProperty(index) {
 
 // 編集内容を保存して再表示する関数
 function saveProperty(index) {
-  const location = document.getElementById('edit-location').value;
-  const layout = document.getElementById('edit-layout').value;
-  const deposit = parseInt(document.getElementById('edit-deposit').value, 10) || 0;
-
-  const keyVal = document.getElementById('edit-key').value;
-  const key_exchange = keyVal === "" ? null : keyVal === 'true';
-
-  const fireVal = document.getElementById('edit-fire').value;
-  const fire_insurance = fireVal === "" ? null : fireVal === 'true';
-
-  const guarantee = document.getElementById('edit-guarantee').value || null;
-
-  const parkingVal = document.getElementById('edit-parking').value;
-  const parking = parkingVal === "" ? null : parseInt(parkingVal, 10);
+  const getValue = (id) => document.getElementById(id).value;
 
   const property = window.propertyData[index];
-  property.location = location;
-  property.layout = layout;
-  property.deposit = deposit;
-  property.key_exchange = key_exchange;
-  property.fire_insurance = fire_insurance;
-  property.guarantee = guarantee;
-  property.parking = parking;
+  if (!property) return;
 
-  console.log('保存後の物件データ:', window.propertyData); // ← ここを修正！
+  const rent = parseInt(getValue('edit-rent'), 10) || 0;
+  const deposit = rent * 2;
+  const guaranteeFee = parseInt(getValue('edit-guarantee-fee'), 10) || 0;
+
+  const keyVal = getValue('edit-key');
+  const key_exchange = keyVal === "" ? null : keyVal === 'true';
+
+  const fireVal = getValue('edit-fire');
+  const fire_insurance = fireVal === "" ? null : fireVal === 'true';
+
+  const guarantee = getValue('edit-guarantee') || null;
+
+  const parkingVal = getValue('edit-parking');
+  const parking = parkingVal === "" ? null : parseInt(parkingVal, 10);
+
+  const keyMoney = parseInt(getValue('edit-key-money'), 10) || 0;
+
+  Object.assign(property, {
+    rent,
+    deposit,
+    key_exchange,
+    fire_insurance,
+    guarantee,
+    parking
+  });
+
+  property.moving_cost = {
+    敷金: deposit,
+    礼金: keyMoney,
+    鍵交換: key_exchange ? 11000 : 0,
+    火災保険: fire_insurance ? 18000 : 0,
+    保証料: guaranteeFee
+  };
+
+  console.log('保存後の物件データ:', window.propertyData);
 
   renderProperties(window.propertyData);
 }
+window.saveProperty = saveProperty;
+
